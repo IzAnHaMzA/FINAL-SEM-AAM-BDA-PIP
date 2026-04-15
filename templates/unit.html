@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIT {{ unit.number }} - {{ unit.title }}</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body data-page="unit" data-subject-key="{{ subject.key }}">
+  <main class="page-shell">
+    <section class="hero-band">
+      <div>
+        <p class="eyebrow">{{ subject.code }} UNIT {{ unit.number }}</p>
+        <h1>{{ unit.title }}</h1>
+        <p class="hero-text">Each unit is on its own page. Diagrams appear where they help revision. Your answer checker, bookmarks, and test mode stay available here too.</p>
+      </div>
+      <div class="hero-stats">
+        <article class="metric"><strong>{{ unit.questions|length }}</strong><span>Questions in this unit</span></article>
+        <article class="metric"><strong id="bookmarkCount">0</strong><span>Bookmarks</span></article>
+        <article class="metric"><strong id="selectedCount">0</strong><span>Test selected</span></article>
+      </div>
+    </section>
+
+    <section class="unit-nav panel">
+      <a class="unit-link" href="{{ url_for('index') }}">Dashboard</a>
+      <a class="unit-link" href="{{ url_for('tasks_page') }}">Tasks</a>
+      <a class="unit-link" href="{{ url_for('subject_page', subject_key=subject.key) }}">{{ subject.name }}</a>
+      {% for item in units %}
+      <a class="unit-link {% if item.number == unit.number %}active{% endif %}" href="{{ url_for('unit_page', subject_key=subject.key, unit_number=item.number) }}">UNIT {{ item.number }}</a>
+      {% endfor %}
+    </section>
+
+    <section class="app-grid">
+      <aside class="panel left-rail">
+        <div class="panel-head"><h2>Questions</h2><span>{{ unit.questions|length }}</span></div>
+        <div class="question-list">
+          {% for question in unit.questions %}
+          <a class="question-item" href="#q-{{ question.id }}">
+            <span class="q-number">{{ question.star }} Q.{{ loop.index }}</span>
+            <span class="q-title">{{ question.question }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      </aside>
+
+      <section class="content-column">
+        <section class="panel must-banner">
+          <div class="panel-head"><h2>Must-Study In This Unit</h2><span>Priority view</span></div>
+          <div class="selector-row">
+            {% for item in must_study if item.unit == ('Unit ' ~ unit.number) %}
+            <div class="selector-pill checked"><span>{{ item.label }}</span></div>
+            {% endfor %}
+          </div>
+        </section>
+
+        {% if current_bank %}
+        <section class="panel">
+          <div class="panel-head"><h2>Important Questions In Full Form</h2><span>{{ current_bank.priority }}</span></div>
+          <div class="important-list">
+            {% for item in current_bank["items"] %}
+            <a class="important-item" href="{% if item.question_id %}#q-{{ item.question_id }}{% else %}#{% endif %}">
+              <strong>{{ item.stars }}</strong>
+              <span>{{ item.text }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        {% for question in unit.questions %}
+        <article class="panel study-card" id="q-{{ question.id }}" data-question-id="{{ question.id }}">
+          <div class="study-head">
+            <div>
+              <p class="eyebrow">{{ question.star }} Q.{{ loop.index }}</p>
+              <h2>{{ question.question }}</h2>
+            </div>
+            <button type="button" class="bookmark-btn" data-bookmark="{{ question.id }}">Save Bookmark</button>
+          </div>
+
+          <section class="study-block">
+            <h3>Definition</h3>
+            <p>{{ question.definition }}</p>
+          </section>
+
+          <section class="study-block">
+            <h3>{% if question.type == 'difference' %}Difference (Side-by-Side){% else %}Points ({{ question.points|length }}){% endif %}</h3>
+            {% if question.type == 'difference' %}
+            <div class="table-wrap">
+              <table class="difference-table">
+                <thead>
+                  <tr>
+                    <th>Basis</th>
+                    <th>{{ question.difference_headers[0] }}</th>
+                    <th>{{ question.difference_headers[1] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for basis in question.difference_basis %}
+                  <tr>
+                    <td>{{ basis }}</td>
+                    <td>{{ question.differences[loop.index0][0] }}</td>
+                    <td>{{ question.differences[loop.index0][1] }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <ul class="point-list">
+              {% for point in question.points %}
+              <li>{{ point }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </section>
+
+          <section class="study-block">
+            <h3>Examples/Use (5)</h3>
+            <div class="example-list">
+              {% for example in question.examples %}
+              <p class="example-chip">{{ example }}</p>
+              {% endfor %}
+            </div>
+          </section>
+
+          <section class="study-block">
+            <h3>Diagram Space</h3>
+            {% if question.diagram_url %}
+            <figure class="diagram-box">
+              <img src="{{ question.diagram_url }}" alt="{{ question.question }} diagram" loading="lazy">
+              <figcaption>{{ question.diagram_caption }}</figcaption>
+            </figure>
+            {% else %}
+            <div class="diagram-box placeholder">
+              <p>No fixed diagram added for this question. You can use this space to attach or sketch your own exam diagram.</p>
+            </div>
+            {% endif %}
+          </section>
+
+          <section class="study-block">
+            <h3>Quick Check</h3>
+            <textarea rows="7" class="answer-box" data-answer="{{ question.id }}" placeholder="Write your answer from memory"></textarea>
+            <div class="test-actions">
+              <button type="button" class="primary-btn" data-check="{{ question.id }}">Check Answer</button>
+              <button type="button" class="soft-btn" data-fill="{{ question.id }}">Show Stored Answer</button>
+              <label class="selector-pill">
+                <input type="checkbox" value="{{ question.id }}" data-test-select="{{ question.id }}">
+                <span>Add to Test</span>
+              </label>
+            </div>
+            <div class="result-box muted-note" id="result-{{ question.id }}">The checker scores similarity, shows what you missed, and gives a revision hint.</div>
+          </section>
+        </article>
+        {% endfor %}
+      </section>
+
+      <aside class="utility-column">
+        <section class="panel">
+          <div class="panel-head"><h2>Saved Bookmarks</h2><span id="bookmarkLabel">0</span></div>
+          <div id="bookmarkList" class="bookmark-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Selected Question Test</h2><span id="selectedTestCount">0 selected</span></div>
+          <div class="test-actions">
+            <button type="button" class="primary-btn" id="startTestBtn">Start Test</button>
+            <button type="button" class="soft-btn" id="clearTestBtn">Clear</button>
+          </div>
+          <div id="testArea" class="test-area"><p class="muted-note">Choose questions with “Add to Test” and start the test here.</p></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Voice Practice</h2><span>Weekly task support</span></div>
+          <label class="field"><span>Question for voice reading</span>
+            <select id="voiceQuestionSelect">
+              {% for question in unit.questions %}
+              <option value="{{ question.id }}">Q.{{ loop.index }} - {{ question.question }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <div class="test-actions">
+            <button type="button" class="primary-btn" id="playAnswerBtn">Play Stored Answer</button>
+            <button type="button" class="soft-btn" id="startVoiceBtn">Start Voice Read</button>
+          </div>
+          <p class="muted-note" id="voiceStatus">Use the microphone button and read the answer aloud. A successful capture is added to the weekly task tracker.</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>aam_pdf Library</h2><span>{{ pdf_files|length }}</span></div>
+          {% if pdf_files %}
+          <ul class="pdf-list">
+            {% for pdf in pdf_files %}
+            <li><strong>{{ pdf.name }}</strong><span>{{ pdf.size_kb }} KB</span></li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="muted-note">Drop PDF files into <code>aam_pdf</code> and they will appear here.</p>
+          {% endif %}
+        </section>
+      </aside>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+  <script>
+    window.questions = {{ questions_json|safe }};
+    const questions = window.questions;
+    let bookmarks = JSON.parse(localStorage.getItem('ml-study-bookmarks') || '[]');
+    let testSelection = JSON.parse(localStorage.getItem('ml-study-test-selection') || '[]');
+    let testState = null;
+
+    function escapeHtml(text) {
+      return text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+    }
+    function getQuestionById(id) { return questions.find((item) => item.id === id); }
+    function saveState() {
+      localStorage.setItem('ml-study-bookmarks', JSON.stringify(bookmarks));
+      localStorage.setItem('ml-study-test-selection', JSON.stringify(testSelection));
+    }
+    function getStoredAnswer(question) {
+      if (question.type === 'difference') {
+        return `Definition:\n${question.definition}\n\nDifference:\n${question.difference_basis.map((basis, index) => `${basis}: ${question.differences[index][0]} | ${question.differences[index][1]}`).join('\n')}\n\nExamples/Use:\n${question.examples.map((example) => `- ${example}`).join('\n')}`;
+      }
+      return `Definition:\n${question.definition}\n\nPoints:\n${question.points.map((point) => `- ${point}`).join('\n')}\n\nExamples/Use:\n${question.examples.map((example) => `- ${example}`).join('\n')}`;
+    }
+    async function evaluate(questionId, answer) {
+      const response = await fetch('/api/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ questionId, answer }) });
+      return response.json();
+    }
+    function renderResult(result, question) {
+      const missing = question.type === 'difference'
+        ? (result.missed_differences.length ? `<ul>${result.missed_differences.map((row) => `<li>${escapeHtml(row.basis)}: ${escapeHtml(row.values[0])} | ${escapeHtml(row.values[1])}</li>`).join('')}</ul>` : '<p>No difference rows missed.</p>')
+        : (result.missed_points.length ? `<ul>${result.missed_points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}</ul>` : '<p>No key points missed.</p>');
+      return `<div class="score-strip"><strong>Score: ${result.score}/100</strong><span>Similarity: ${result.similarity_percent}%</span><span>Definition match: ${result.definition_match_percent}%</span></div><div class="feedback-grid"><section><h4>What you missed</h4>${missing}</section><section><h4>Feedback</h4><ul>${result.feedback.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul><p><strong>Examples expected:</strong> ${result.example_expected.map((item) => escapeHtml(item)).join(', ')}</p></section></div>`;
+    }
+    function renderBookmarks() {
+      const bookmarkList = document.getElementById('bookmarkList');
+      const items = bookmarks.map(getQuestionById).filter(Boolean);
+      document.getElementById('bookmarkCount').textContent = items.length;
+      document.getElementById('bookmarkLabel').textContent = items.length;
+      bookmarkList.innerHTML = items.length ? items.map((question) => `<a class="bookmark-item" href="#q-${question.id}"><strong>Q.${question.id}</strong><span>${escapeHtml(question.question)}</span></a>`).join('') : '<p class="muted-note">Bookmark important questions for last-minute revision.</p>';
+      document.querySelectorAll('[data-bookmark]').forEach((button) => {
+        const id = Number(button.dataset.bookmark);
+        const saved = bookmarks.includes(id);
+        button.textContent = saved ? 'Bookmarked' : 'Save Bookmark';
+        button.classList.toggle('saved', saved);
+      });
+    }
+    function renderSelectedCount() {
+      document.getElementById('selectedCount').textContent = testSelection.length;
+      document.getElementById('selectedTestCount').textContent = `${testSelection.length} selected`;
+      document.querySelectorAll('[data-test-select]').forEach((input) => { input.checked = testSelection.includes(Number(input.value)); input.closest('.selector-pill').classList.toggle('checked', input.checked); });
+    }
+    function toggleBookmark(id) {
+      bookmarks = bookmarks.includes(id) ? bookmarks.filter((item) => item !== id) : [...bookmarks, id];
+      saveState();
+      renderBookmarks();
+    }
+    function startTest() {
+      if (!testSelection.length) {
+        document.getElementById('testArea').innerHTML = '<p class="muted-note">Select at least one question first.</p>';
+        return;
+      }
+      testState = { ids: [...testSelection], index: 0, scores: [] };
+      renderTestQuestion();
+    }
+    function renderTestQuestion() {
+      const question = getQuestionById(testState.ids[testState.index]);
+      const testArea = document.getElementById('testArea');
+      testArea.innerHTML = `<div class="test-card"><div class="panel-head"><h3>Q.${question.id} Test</h3><span>${testState.index + 1} / ${testState.ids.length}</span></div><p class="test-question">${escapeHtml(question.question)}</p><textarea id="testAnswer" rows="10" placeholder="Write your answer"></textarea><div class="test-actions"><button type="button" class="primary-btn" id="submitTestAnswer">Submit Answer</button></div><div id="testFeedback" class="result-box muted-note">Your answer will be checked against the stored answer.</div></div>`;
+      document.getElementById('submitTestAnswer').addEventListener('click', async () => {
+        const result = await evaluate(question.id, document.getElementById('testAnswer').value);
+        testState.scores.push({ id: question.id, score: result.score });
+        document.getElementById('testFeedback').innerHTML = renderResult(result, question) + `<div class="test-actions top-gap"><button type="button" class="primary-btn" id="nextTestBtn">${testState.index + 1 === testState.ids.length ? 'Finish Test' : 'Next Question'}</button></div>`;
+        document.getElementById('nextTestBtn').addEventListener('click', () => { testState.index += 1; if (testState.index >= testState.ids.length) { renderSummary(); } else { renderTestQuestion(); } });
+      });
+    }
+    function renderSummary() {
+      const average = Math.round(testState.scores.reduce((sum, item) => sum + item.score, 0) / testState.scores.length);
+      document.getElementById('testArea').innerHTML = `<div class="test-card"><h3>Test Summary</h3><p class="summary-score">Average Score: ${average}/100</p><ul class="summary-list">${testState.scores.map((item) => `<li>Q.${item.id}: ${item.score}/100</li>`).join('')}</ul><div class="test-actions"><button type="button" class="primary-btn" id="restartTestBtn">Retake Test</button></div></div>`;
+      document.getElementById('restartTestBtn').addEventListener('click', startTest);
+    }
+    document.querySelectorAll('[data-bookmark]').forEach((button) => button.addEventListener('click', () => toggleBookmark(Number(button.dataset.bookmark))));
+    document.querySelectorAll('[data-fill]').forEach((button) => button.addEventListener('click', () => {
+      const question = getQuestionById(Number(button.dataset.fill));
+      document.querySelector(`[data-answer="${question.id}"]`).value = getStoredAnswer(question);
+    }));
+    document.querySelectorAll('[data-check]').forEach((button) => button.addEventListener('click', async () => {
+      const id = Number(button.dataset.check);
+      const question = getQuestionById(id);
+      const answer = document.querySelector(`[data-answer="${id}"]`).value;
+      const result = await evaluate(id, answer);
+      document.getElementById(`result-${id}`).innerHTML = renderResult(result, question);
+    }));
+    document.querySelectorAll('[data-test-select]').forEach((input) => input.addEventListener('change', () => {
+      const id = Number(input.value);
+      if (input.checked && !testSelection.includes(id)) testSelection.push(id);
+      if (!input.checked) testSelection = testSelection.filter((item) => item !== id);
+      saveState();
+      renderSelectedCount();
+    }));
+    document.getElementById('startTestBtn').addEventListener('click', startTest);
+    document.getElementById('clearTestBtn').addEventListener('click', () => { testSelection = []; saveState(); renderSelectedCount(); });
+    renderBookmarks();
+    renderSelectedCount();
+  </script>
+</body>
+</html>

@@ -520,6 +520,112 @@ BDA_MARKS = [
     {"unit": "Unit 5", "topic": "Spark & NoSQL", "marks": "14 marks"},
 ]
 
+MAN_UNITS = [
+    {
+        "id": "man-unit-1",
+        "number": 1,
+        "title": "Management MCQ Bank",
+        "marks": "MCQ focus",
+        "questions": [
+            {"id": 301, "star": "", "question": "In a pull-based Kanban system", "definition": "Work is started only when there is demand from the next process", "points": ["Work is started only when there is demand from the next process"], "examples": [], "type": "mcq"},
+            {"id": 302, "star": "", "question": 'The "Zero Defect" concept was given by', "definition": "Philip Crosby", "points": ["Philip Crosby"], "examples": [], "type": "mcq"},
+            {"id": 303, "star": "", "question": "In the 7 Ps of marketing, Physical Evidence refers to", "definition": "Tangible elements that represent service quality", "points": ["Tangible elements that represent service quality"], "examples": [], "type": "mcq"},
+            {"id": 304, "star": "", "question": "Which company popularized Six Sigma after Motorola", "definition": "General Electric (GE)", "points": ["General Electric (GE)"], "examples": [], "type": "mcq"},
+            {"id": 305, "star": "", "question": "TPM focuses on improving", "definition": "Overall Equipment Effectiveness (OEE)", "points": ["Overall Equipment Effectiveness (OEE)"], "examples": [], "type": "mcq"},
+            {"id": 306, "star": "", "question": "Durable long-lasting mobile phone refers to", "definition": "Real need", "points": ["Real need"], "examples": [], "type": "mcq"},
+            {"id": 307, "star": "", "question": "Shitsuke in 5S means", "definition": "Discipline and sustaining habit", "points": ["Discipline and sustaining habit"], "examples": [], "type": "mcq"},
+            {"id": 308, "star": "", "question": "Practice related to Kaizen", "definition": "Just-in-Time (JIT)", "points": ["Just-in-Time (JIT)"], "examples": [], "type": "mcq"},
+            {"id": 309, "star": "", "question": "Six Sigma goal", "definition": "3.4 defects per million opportunities", "points": ["3.4 defects per million opportunities"], "examples": [], "type": "mcq"},
+            {"id": 310, "star": "", "question": "DMAIC stands for", "definition": "Define Measure Analyze Improve Control", "points": ["Define Measure Analyze Improve Control"], "examples": [], "type": "mcq"},
+            {"id": 311, "star": "", "question": "Traditional marketing provides", "definition": "One-way communication", "points": ["One-way communication"], "examples": [], "type": "mcq"},
+            {"id": 312, "star": "", "question": "Fitness for use given by", "definition": "Juran", "points": ["Juran"], "examples": [], "type": "mcq"},
+            {"id": 313, "star": "", "question": "Not part of 7Ps", "definition": "Partnership", "points": ["Partnership"], "examples": [], "type": "mcq"},
+            {"id": 314, "star": "", "question": "Seiri means", "definition": "Sort remove unnecessary items", "points": ["Sort remove unnecessary items"], "examples": [], "type": "mcq"},
+            {"id": 315, "star": "", "question": "OEE formula", "definition": "Availability x Performance x Quality", "points": ["Availability x Performance x Quality"], "examples": [], "type": "mcq"},
+            {"id": 316, "star": "", "question": "Six Sigma developed by", "definition": "Motorola", "points": ["Motorola"], "examples": [], "type": "mcq"},
+            {"id": 317, "star": "", "question": "Quality Circle includes", "definition": "5-10 members from same department", "points": ["5-10 members from same department"], "examples": [], "type": "mcq"},
+            {"id": 318, "star": "", "question": "Sigma represents", "definition": "Standard deviation", "points": ["Standard deviation"], "examples": [], "type": "mcq"},
+            {"id": 319, "star": "", "question": "Tool used in Quality Circles", "definition": "Fishbone diagram", "points": ["Fishbone diagram"], "examples": [], "type": "mcq"},
+            {"id": 320, "star": "", "question": "Core principle of TQM", "definition": "Doing things right first time", "points": ["Doing things right first time"], "examples": [], "type": "mcq"},
+            {"id": 321, "star": "", "question": "Purpose of Kanban", "definition": "Control production and material flow visually", "points": ["Control production and material flow visually"], "examples": [], "type": "mcq"},
+            {"id": 322, "star": "", "question": "TPM originated from", "definition": "Nippon Denso", "points": ["Nippon Denso"], "examples": [], "type": "mcq"},
+            {"id": 323, "star": "", "question": "Black Belts are", "definition": "Experts who mentor others", "points": ["Experts who mentor others"], "examples": [], "type": "mcq"},
+            {"id": 324, "star": "", "question": "Ability to pay + desire", "definition": "Demand", "points": ["Demand"], "examples": [], "type": "mcq"},
+            {"id": 325, "star": "", "question": "Six Sigma accuracy", "definition": "99.99966%", "points": ["99.99966%"], "examples": [], "type": "mcq"},
+            {"id": 326, "star": "", "question": "Not TPM pillar", "definition": "Product Design", "points": ["Product Design"], "examples": [], "type": "mcq"},
+            {"id": 327, "star": "", "question": "Red tag used in", "definition": "Seiri", "points": ["Seiri"], "examples": [], "type": "mcq"},
+            {"id": 328, "star": "", "question": "Place in marketing", "definition": "Distribution channels", "points": ["Distribution channels"], "examples": [], "type": "mcq"},
+            {"id": 329, "star": "", "question": "Two-card Kanban", "definition": "Transport and Production Kanban", "points": ["Transport and Production Kanban"], "examples": [], "type": "mcq"},
+            {"id": 330, "star": "", "question": "Relationship", "definition": "Need -> Want -> Demand", "points": ["Need -> Want -> Demand"], "examples": [], "type": "mcq"},
+            {"id": 331, "star": "", "question": "Lean Manufacturing objective", "definition": "Eliminate waste and improve value to customer", "points": ["Eliminate waste and improve value to customer"], "examples": [], "type": "mcq"},
+            {"id": 332, "star": "", "question": "Founder of Quality Circle", "definition": "Kaoru Ishikawa", "points": ["Kaoru Ishikawa"], "examples": [], "type": "mcq"},
+            {"id": 333, "star": "", "question": "TPM emphasizes", "definition": "Preventive and Autonomous maintenance", "points": ["Preventive and Autonomous maintenance"], "examples": [], "type": "mcq"},
+            {"id": 334, "star": "", "question": "Kanban card represents", "definition": "Production order or part requirement", "points": ["Production order or part requirement"], "examples": [], "type": "mcq"},
+            {"id": 335, "star": "", "question": "Autonomous Maintenance means", "definition": "Operators maintain their own machines", "points": ["Operators maintain their own machines"], "examples": [], "type": "mcq"},
+            {"id": 336, "star": "", "question": "Not traditional marketing", "definition": "Search engine optimization (SEO)", "points": ["Search engine optimization (SEO)"], "examples": [], "type": "mcq"},
+            {"id": 337, "star": "", "question": "7Ps expanded from", "definition": "4 Ps", "points": ["4 Ps"], "examples": [], "type": "mcq"},
+            {"id": 338, "star": "", "question": "Quality Circles approach", "definition": "Bottom-up", "points": ["Bottom-up"], "examples": [], "type": "mcq"},
+            {"id": 339, "star": "", "question": "TPM goal", "definition": "Zero accidents zero defects zero breakdowns", "points": ["Zero accidents zero defects zero breakdowns"], "examples": [], "type": "mcq"},
+            {"id": 340, "star": "", "question": "Kaizen means", "definition": "Continuous improvement", "points": ["Continuous improvement"], "examples": [], "type": "mcq"},
+            {"id": 341, "star": "", "question": "Master Black Belt", "definition": "Leads Six Sigma program company-wide", "points": ["Leads Six Sigma program company-wide"], "examples": [], "type": "mcq"},
+            {"id": 342, "star": "", "question": "PPC means", "definition": "Pay only when users click advertisement", "points": ["Pay only when users click advertisement"], "examples": [], "type": "mcq"},
+            {"id": 343, "star": "", "question": "Seiton means", "definition": "Set things in order for easy access", "points": ["Set things in order for easy access"], "examples": [], "type": "mcq"},
+            {"id": 344, "star": "", "question": "Quality Circles in India", "definition": "BHEL", "points": ["BHEL"], "examples": [], "type": "mcq"},
+            {"id": 345, "star": "", "question": "Not element of TQM", "definition": "Rigid hierarchy", "points": ["Rigid hierarchy"], "examples": [], "type": "mcq"},
+            {"id": 346, "star": "", "question": "Goal of Kanban", "definition": "Produce only what is needed when needed", "points": ["Produce only what is needed when needed"], "examples": [], "type": "mcq"},
+            {"id": 347, "star": "", "question": "TPM pillars", "definition": "8", "points": ["8"], "examples": [], "type": "mcq"},
+            {"id": 348, "star": "", "question": "First step marketing", "definition": "Identifying customer needs", "points": ["Identifying customer needs"], "examples": [], "type": "mcq"},
+            {"id": 349, "star": "", "question": "SEO helps to", "definition": "Increase website visibility", "points": ["Increase website visibility"], "examples": [], "type": "mcq"},
+            {"id": 350, "star": "", "question": "Kanban language", "definition": "Japanese", "points": ["Japanese"], "examples": [], "type": "mcq"},
+            {"id": 351, "star": "", "question": "Analytics easier in", "definition": "Digital marketing", "points": ["Digital marketing"], "examples": [], "type": "mcq"},
+            {"id": 352, "star": "", "question": "Expecting service but not saying", "definition": "Unstated need", "points": ["Unstated need"], "examples": [], "type": "mcq"},
+            {"id": 353, "star": "", "question": "PDCA cycle", "definition": "Kaizen and TQM", "points": ["Kaizen and TQM"], "examples": [], "type": "mcq"},
+            {"id": 354, "star": "", "question": "Seiketsu means", "definition": "Standardizing procedures", "points": ["Standardizing procedures"], "examples": [], "type": "mcq"},
+            {"id": 355, "star": "", "question": "Benefit of Quality Circles", "definition": "Improved quality and productivity", "points": ["Improved quality and productivity"], "examples": [], "type": "mcq"},
+            {"id": 356, "star": "", "question": "People in marketing", "definition": "Employees sales staff and service providers", "points": ["Employees sales staff and service providers"], "examples": [], "type": "mcq"},
+            {"id": 357, "star": "", "question": "Kanban means", "definition": "Visual signal or card", "points": ["Visual signal or card"], "examples": [], "type": "mcq"},
+            {"id": 358, "star": "", "question": "Kaizen philosophy", "definition": "Small improvements regularly", "points": ["Small improvements regularly"], "examples": [], "type": "mcq"},
+            {"id": 359, "star": "", "question": "Not advantage of Kanban", "definition": "Increases lead time", "points": ["Increases lead time"], "examples": [], "type": "mcq"},
+            {"id": 360, "star": "", "question": "Traditional marketing", "definition": "Offline promotion using print radio TV", "points": ["Offline promotion using print radio TV"], "examples": [], "type": "mcq"},
+        ],
+    },
+]
+
+MAN_IMPORTANT_QUESTION_BANK = [
+    {"unit": "Top 30 Important", "priority": "Exam Focus", "color": "red", "items": [
+        {"stars": "TOP", "text": "Zero Defect - Philip Crosby", "question_id": 302},
+        {"stars": "TOP", "text": "Six Sigma GE", "question_id": 304},
+        {"stars": "TOP", "text": "OEE", "question_id": 305},
+        {"stars": "TOP", "text": "JIT", "question_id": 308},
+        {"stars": "TOP", "text": "Six Sigma 3.4 defects", "question_id": 309},
+        {"stars": "TOP", "text": "DMAIC", "question_id": 310},
+        {"stars": "TOP", "text": "Juran", "question_id": 312},
+        {"stars": "TOP", "text": "OEE formula", "question_id": 315},
+        {"stars": "TOP", "text": "Motorola", "question_id": 316},
+        {"stars": "TOP", "text": "Quality Circle", "question_id": 317},
+        {"stars": "TOP", "text": "Standard deviation", "question_id": 318},
+        {"stars": "TOP", "text": "Fishbone diagram", "question_id": 319},
+        {"stars": "TOP", "text": "TQM principle", "question_id": 320},
+        {"stars": "TOP", "text": "Kanban purpose", "question_id": 321},
+        {"stars": "TOP", "text": "TPM origin", "question_id": 322},
+        {"stars": "TOP", "text": "Black Belt", "question_id": 323},
+        {"stars": "TOP", "text": "Six Sigma accuracy", "question_id": 325},
+        {"stars": "TOP", "text": "Kanban types", "question_id": 329},
+        {"stars": "TOP", "text": "Lean Manufacturing", "question_id": 331},
+        {"stars": "TOP", "text": "Ishikawa", "question_id": 332},
+        {"stars": "TOP", "text": "TPM maintenance", "question_id": 333},
+        {"stars": "TOP", "text": "Bottom-up", "question_id": 338},
+        {"stars": "TOP", "text": "TPM goal", "question_id": 339},
+        {"stars": "TOP", "text": "Kaizen", "question_id": 340},
+        {"stars": "TOP", "text": "Seiton", "question_id": 343},
+        {"stars": "TOP", "text": "TPM pillars", "question_id": 347},
+        {"stars": "TOP", "text": "PDCA", "question_id": 353},
+        {"stars": "TOP", "text": "Seiketsu", "question_id": 354},
+        {"stars": "TOP", "text": "Kanban meaning", "question_id": 357},
+        {"stars": "TOP", "text": "Kaizen philosophy", "question_id": 358},
+    ]},
+]
+
 SUBJECTS = {
     "aam": {
         "key": "aam",
@@ -551,6 +657,17 @@ SUBJECTS = {
         "must_study": [],
         "marks": BDA_MARKS,
     },
+    "man": {
+        "key": "man",
+        "name": "Management",
+        "code": "MAN",
+        "hero": "MCQ-only revision page with direct question-answer format and top 30 exam-focus picks.",
+        "units": MAN_UNITS,
+        "important_bank": MAN_IMPORTANT_QUESTION_BANK,
+        "must_study": [],
+        "marks": [],
+        "mcq_only": True,
+    },
 }
 
 
@@ -562,15 +679,19 @@ def expand_question_details() -> None:
         "aam": " It is important for understanding exam-oriented concepts along with practical analytical applications.",
         "pip": " It is important for understanding how images are processed, improved, and analyzed in practical systems.",
         "bda": " It is important for understanding distributed storage, large-scale processing, and modern analytics systems.",
+        "man": "",
     }
     point_suffix = {
         "aam": ", which strengthens conceptual understanding for model building and data-driven problem solving.",
         "pip": ", which helps explain the role of the concept in practical image processing workflows.",
         "bda": ", which is useful for explaining how scalable data systems work in real environments.",
+        "man": "",
     }
     for subject_key, subject in SUBJECTS.items():
         for unit in subject["units"]:
             for question in unit["questions"]:
+                if subject_key == "man":
+                    continue
                 if not question["definition"].endswith(subject_suffix[subject_key].strip()):
                     question["definition"] = question["definition"].rstrip(".") + "." + subject_suffix[subject_key]
                 if question["type"] != "difference":

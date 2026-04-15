@@ -118,7 +118,7 @@
     const questions = allQuestions();
     const groups = {};
     questions.forEach((question) => {
-      const key = question.id >= 200 ? "BDA" : question.id >= 100 ? "PIP" : "AAM";
+      const key = question.id >= 300 ? "MAN" : question.id >= 200 ? "BDA" : question.id >= 100 ? "PIP" : "AAM";
       if (!groups[key]) groups[key] = [];
       groups[key].push(question);
     });

@@ -252,6 +252,132 @@
     recognition.start();
   }
 
+  // Image upload and reference handling
+  async function loadAvailableImages(questionId) {
+    try {
+      const response = await fetch('/api/images');
+      const data = await response.json();
+      const select = document.querySelector(`.image-reference-select[data-question-id="${questionId}"]`);
+      if (!select) return;
+      
+      // Clear existing options except the first one
+      while (select.options.length > 1) {
+        select.remove(1);
+      }
+      
+      // Add image options
+      data.images.forEach(img => {
+        const option = document.createElement('option');
+        option.value = img.url;
+        option.textContent = `${img.filename} (${img.size_kb}KB)`;
+        select.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading images:', error);
+    }
+  }
+
+  async function uploadImage(questionId) {
+    const input = document.querySelector(`.image-upload-input[data-question-id="${questionId}"]`);
+    const statusDiv = document.querySelector(`.image-upload-status[data-question-id="${questionId}"]`);
+    
+    if (!input || !input.files.length) {
+      if (statusDiv) statusDiv.textContent = 'Please select a file';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+
+    if (statusDiv) {
+      statusDiv.style.display = 'block';
+      statusDiv.textContent = 'Uploading...';
+      statusDiv.style.color = 'var(--secondary)';
+    }
+
+    try {
+      const response = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+      const isJson = response.headers.get('content-type')?.includes('application/json');
+      const data = isJson ? await response.json() : null;
+
+      if (response.ok && data?.success) {
+        if (statusDiv) {
+          statusDiv.textContent = 'Upload successful!';
+          statusDiv.style.color = 'var(--primary)';
+          setTimeout(() => statusDiv.style.display = 'none', 2000);
+        }
+        input.value = '';
+        // Reload image dropdown
+        await loadAvailableImages(questionId);
+      } else {
+        if (statusDiv) {
+          statusDiv.textContent = `Error: ${data?.error || 'Upload failed. Please try a smaller image.'}`;
+          statusDiv.style.color = '#d32f2f';
+        }
+      }
+    } catch (error) {
+      if (statusDiv) {
+        statusDiv.textContent = 'Upload failed. Please try again.';
+        statusDiv.style.color = '#d32f2f';
+      }
+      console.error('Upload error:', error);
+    }
+  }
+
+  function displaySelectedImage(questionId, imageUrl) {
+    const displayArea = document.querySelector(`.image-display-area[data-question-id="${questionId}"]`);
+    if (!displayArea || !imageUrl) return;
+
+    const img = displayArea.querySelector('.selected-image');
+    const filename = displayArea.querySelector('.image-filename');
+    
+    if (img && imageUrl) {
+      img.src = imageUrl;
+      displayArea.style.display = 'block';
+      if (filename) {
+        const parts = imageUrl.split('/');
+        filename.textContent = `Image: ${parts[parts.length - 1]}`;
+      }
+    } else {
+      displayArea.style.display = 'none';
+    }
+  }
+
+  // Initialize image handlers for all questions
+  function initImageHandlers() {
+    // Load initial image dropdowns
+    document.querySelectorAll('.image-reference-select').forEach(select => {
+      const questionId = select.dataset.questionId;
+      loadAvailableImages(questionId);
+      
+      // Handle dropdown change
+      select.addEventListener('change', (e) => {
+        displaySelectedImage(questionId, e.target.value);
+      });
+    });
+
+    // Handle upload buttons
+    document.querySelectorAll('.image-upload-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const questionId = btn.dataset.questionId;
+        uploadImage(questionId);
+      });
+    });
+
+    // Handle file input enter key
+    document.querySelectorAll('.image-upload-input').forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const questionId = input.dataset.questionId;
+          uploadImage(questionId);
+        }
+      });
+    });
+  }
+
   document.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;

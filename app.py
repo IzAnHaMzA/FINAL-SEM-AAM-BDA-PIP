@@ -7,12 +7,22 @@ from datetime import date, datetime, time
 from pathlib import Path
 
 from flask import Flask, jsonify, redirect, render_template, request, send_from_directory, url_for
+from werkzeug.exceptions import RequestEntityTooLarge
+from werkzeug.utils import secure_filename
 
 
 BASE_DIR = Path(__file__).resolve().parent
 PDF_DIR = BASE_DIR / "aam_pdf"
+IMAGE_DIR = BASE_DIR / "aam_images"
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'}
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_file_too_large(error):
+    return jsonify({"error": "Image is too large. Please upload an image smaller than 8 MB."}), 413
 
 EXAM_TIMETABLE = {
     "season": "MSBTE Summer 2026 - YOUR SUBJECTS",
@@ -1033,6 +1043,53 @@ def api_evaluate():
     if not question:
         return jsonify({"error": "Question not found."}), 404
     return jsonify(evaluate_answer(question, payload.get("answer", "")))
+
+
+def allowed_file(filename: str) -> bool:
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.post("/api/upload-image")
+def api_upload_image():
+    if "file" not in request.files:
+        return jsonify({"error": "No file part in request"}), 400
+    
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+    
+    if not allowed_file(file.filename):
+        return jsonify({"error": f"File type not allowed. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"}), 400
+    
+    # Create directory if it doesn't exist
+    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Save file with secure filename
+    filename = secure_filename(file.filename)
+    filepath = IMAGE_DIR / filename
+    file.save(filepath)
+    
+    return jsonify({"success": True, "filename": filename, "url": url_for("serve_image", filename=filename)})
+
+
+@app.get("/api/images")
+def api_list_images():
+    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    images = []
+    if IMAGE_DIR.exists():
+        for filepath in sorted(IMAGE_DIR.glob("*")):
+            if filepath.is_file() and allowed_file(filepath.name):
+                images.append({
+                    "filename": filepath.name,
+                    "url": url_for("serve_image", filename=filepath.name),
+                    "size_kb": round(filepath.stat().st_size / 1024, 1)
+                })
+    return jsonify({"images": images})
+
+
+@app.get("/images/<filename>")
+def serve_image(filename: str):
+    return send_from_directory(IMAGE_DIR, secure_filename(filename))
 
 
 @app.get("/manifest.webmanifest")

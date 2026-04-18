@@ -152,6 +152,31 @@
           <img src="{{ url_for('static', filename='../' + question_obj.image_path) }}" alt="Diagram" style="max-width: 100%; max-height: 300px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)">
         </div>
         {% endif %}
+        {% if question_obj %}
+        <div class="bda-reference-tools">
+          <h4>Unit As Reference</h4>
+          <div class="bda-reference-grid">
+            <div>
+              <label class="bda-field-label" for="reference-select-important-{{ question_obj.id }}">Select uploaded image</label>
+              <select id="reference-select-important-{{ question_obj.id }}" class="bda-reference-select image-reference-select" data-question-id="{{ question_obj.id }}">
+                <option value="">Choose an image reference</option>
+              </select>
+            </div>
+            <div>
+              <label class="bda-field-label" for="upload-input-important-{{ question_obj.id }}">Upload any image</label>
+              <input id="upload-input-important-{{ question_obj.id }}" type="file" class="bda-upload-input image-upload-input" data-question-id="{{ question_obj.id }}" accept="image/*">
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ question_obj.id }}">Upload Image</button>
+            </div>
+          </div>
+          <div class="bda-upload-status image-upload-status" data-question-id="{{ question_obj.id }}"></div>
+          <div class="bda-selected-image-wrap image-display-area" data-question-id="{{ question_obj.id }}">
+            <p class="bda-selected-image-name image-filename"></p>
+            <img class="selected-image" src="" alt="Selected reference image" onclick="expandImage(this)">
+          </div>
+        </div>
+        {% endif %}
         <div class="bda-question-answer">
           <pre>{{ question_obj.answer if question_obj else 'Answer not found' }}</pre>
         </div>

@@ -50,6 +50,17 @@
     .bda-diagram-section { background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
     .bda-diagram-preview { max-width: 100%; max-height: 300px; border-radius: 4px; margin-top: 1rem; cursor: pointer; transition: transform 0.3s; }
     .bda-diagram-preview:hover { transform: scale(1.05); }
+    .bda-reference-tools { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin: 1rem 0; }
+    .bda-reference-tools h4 { margin: 0 0 0.75rem 0; color: #1e3a8a; font-size: 1rem; }
+    .bda-reference-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; align-items: end; }
+    .bda-field-label { display: block; margin-bottom: 0.35rem; font-size: 0.9rem; font-weight: 600; color: #334155; }
+    .bda-reference-select, .bda-upload-input { width: 100%; padding: 0.7rem 0.8rem; border: 1px solid #94a3b8; border-radius: 8px; font-size: 0.95rem; background: white; }
+    .bda-upload-btn { background: #0f766e; color: white; border: none; padding: 0.78rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s ease; }
+    .bda-upload-btn:hover { background: #115e59; }
+    .bda-upload-status { margin-top: 0.75rem; font-size: 0.9rem; display: none; }
+    .bda-selected-image-wrap { display: none; margin-top: 1rem; padding: 1rem; background: #eff6ff; border: 1px dashed #2563eb; border-radius: 10px; }
+    .bda-selected-image-wrap img { max-width: 100%; max-height: 320px; border-radius: 8px; cursor: pointer; display: block; margin: 0 auto; }
+    .bda-selected-image-name { margin: 0 0 0.75rem 0; font-size: 0.9rem; color: #1e40af; font-weight: 600; }
     
     .bda-toggle-btn { background: #1e40af; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 0.5rem; transition: all 0.3s; }
     .bda-toggle-btn:hover { background: #1e3a8a; }
@@ -241,6 +252,30 @@
           <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6b7280;">💡 Tip: Click on the diagram to view in full size</p>
         </div>
         {% endif %}
+
+        <div class="bda-reference-tools">
+          <h4>Unit As Reference</h4>
+          <div class="bda-reference-grid">
+            <div>
+              <label class="bda-field-label" for="reference-select-{{ q.id }}">Select uploaded image</label>
+              <select id="reference-select-{{ q.id }}" class="bda-reference-select image-reference-select" data-question-id="{{ q.id }}">
+                <option value="">Choose an image reference</option>
+              </select>
+            </div>
+            <div>
+              <label class="bda-field-label" for="upload-input-{{ q.id }}">Upload any image</label>
+              <input id="upload-input-{{ q.id }}" type="file" class="bda-upload-input image-upload-input" data-question-id="{{ q.id }}" accept="image/*">
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ q.id }}">Upload Image</button>
+            </div>
+          </div>
+          <div class="bda-upload-status image-upload-status" data-question-id="{{ q.id }}"></div>
+          <div class="bda-selected-image-wrap image-display-area" data-question-id="{{ q.id }}">
+            <p class="bda-selected-image-name image-filename"></p>
+            <img class="selected-image" src="" alt="Selected reference image" onclick="expandImage(this)">
+          </div>
+        </div>
         
         <div class="bda-question-answer">
           {% if q.type == 'differentiate' %}
@@ -279,12 +314,15 @@
   </div>
 
   <script>
-    function filterQuestions(filterType) {
+    function filterQuestions(filterType, clickedButton) {
       const allCards = document.querySelectorAll('.bda-question-card');
       const allButtons = document.querySelectorAll('.bda-filter-btn');
       
       allButtons.forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      const activeButton = clickedButton || window.event?.target;
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
       
       allCards.forEach(card => {
         if (filterType === 'all') {
@@ -296,7 +334,7 @@
     }
 
     function toggleAnswer(btn) {
-      const answer = btn.nextElementSibling;
+      const answer = btn.closest('.bda-question-card')?.querySelector('.bda-question-answer');
       if (answer && answer.classList.contains('bda-question-answer')) {
         answer.classList.toggle('show');
         btn.textContent = answer.classList.contains('show') ? '📖 Hide Answer' : '📖 Show Answer';
@@ -328,6 +366,131 @@
         closeImageModal();
       }
     });
+
+    async function loadAvailableImages(questionId) {
+      try {
+        const response = await fetch('/api/images');
+        const data = await response.json();
+        const select = document.querySelector(`.image-reference-select[data-question-id="${questionId}"]`);
+        if (!select) return;
+
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+
+        data.images.forEach((img) => {
+          const option = document.createElement('option');
+          option.value = img.url;
+          option.textContent = `${img.filename} (${img.size_kb}KB)`;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading images:', error);
+      }
+    }
+
+    function displaySelectedImage(questionId, imageUrl) {
+      const displayArea = document.querySelector(`.image-display-area[data-question-id="${questionId}"]`);
+      if (!displayArea) return;
+
+      const image = displayArea.querySelector('.selected-image');
+      const filename = displayArea.querySelector('.image-filename');
+
+      if (!imageUrl) {
+        if (image) image.src = '';
+        if (filename) filename.textContent = '';
+        displayArea.style.display = 'none';
+        return;
+      }
+
+      if (image) image.src = imageUrl;
+      if (filename) {
+        const parts = imageUrl.split('/');
+        filename.textContent = `Selected reference: ${parts[parts.length - 1]}`;
+      }
+      displayArea.style.display = 'block';
+    }
+
+    async function uploadImage(questionId) {
+      const input = document.querySelector(`.image-upload-input[data-question-id="${questionId}"]`);
+      const statusDiv = document.querySelector(`.image-upload-status[data-question-id="${questionId}"]`);
+      const select = document.querySelector(`.image-reference-select[data-question-id="${questionId}"]`);
+
+      if (!input || !input.files.length) {
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.style.color = '#b91c1c';
+          statusDiv.textContent = 'Please select an image first.';
+        }
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', input.files[0]);
+
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.color = '#475569';
+        statusDiv.textContent = 'Uploading image...';
+      }
+
+      try {
+        const response = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Upload failed');
+        }
+
+        await loadAvailableImages(questionId);
+        if (select) {
+          select.value = data.url;
+        }
+        displaySelectedImage(questionId, data.url);
+        input.value = '';
+
+        if (statusDiv) {
+          statusDiv.style.color = '#0f766e';
+          statusDiv.textContent = 'Upload successful. Added to Unit As Reference.';
+        }
+      } catch (error) {
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.style.color = '#b91c1c';
+          statusDiv.textContent = error.message || 'Upload failed. Please try again.';
+        }
+      }
+    }
+
+    function initImageReferenceTools() {
+      document.querySelectorAll('.image-reference-select').forEach((select) => {
+        const questionId = select.dataset.questionId;
+        loadAvailableImages(questionId);
+        select.addEventListener('change', (event) => {
+          displaySelectedImage(questionId, event.target.value);
+        });
+      });
+
+      document.querySelectorAll('.image-upload-btn').forEach((button) => {
+        button.addEventListener('click', () => uploadImage(button.dataset.questionId));
+      });
+
+      document.querySelectorAll('.image-upload-input').forEach((input) => {
+        input.addEventListener('change', () => {
+          const statusDiv = document.querySelector(`.image-upload-status[data-question-id="${input.dataset.questionId}"]`);
+          if (statusDiv && input.files.length) {
+            statusDiv.style.display = 'block';
+            statusDiv.style.color = '#475569';
+            statusDiv.textContent = `Selected: ${input.files[0].name}`;
+          }
+        });
+      });
+    }
+
+    initImageReferenceTools();
   </script>
 </body>
 </html>

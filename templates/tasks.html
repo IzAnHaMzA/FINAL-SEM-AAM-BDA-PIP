@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='2') }}">
+</head>
+<body data-page="tasks">
+  <main class="page-shell">
+    <section class="hero-band">
+      <div>
+        <p class="eyebrow">Weekly Task Tracker</p>
+        <h1>Each question must be typed 5 times and read 7 times every week until the paper.</h1>
+        <p class="hero-text">This page tracks only task progress so the study pages stay clean. Progress is stored per user in this browser.</p>
+      </div>
+      <div class="hero-stats">
+        <article class="metric"><strong id="taskQuestionCount">{{ all_questions|length }}</strong><span>Total questions</span></article>
+        <article class="metric"><strong id="weeklyTypingSummary">0</strong><span>Typing completions</span></article>
+        <article class="metric"><strong id="weeklyVoiceSummary">0</strong><span>Voice completions</span></article>
+      </div>
+    </section>
+
+    <section class="unit-nav panel">
+      <a class="unit-link" href="{{ url_for('index') }}">Dashboard</a>
+      {% for subject in subjects_meta %}
+      <a class="unit-link" href="{{ url_for('subject_page', subject_key=subject.key) }}">{{ subject.code }}</a>
+      {% endfor %}
+    </section>
+
+    <section class="home-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Profile & Weekly Goals</h2><span>Local browser only</span></div>
+        <div class="practice-grid">
+          <article class="metric"><strong id="typingProgress">0 / 0</strong><span>Typing progress this week</span></article>
+          <article class="metric"><strong id="voiceProgress">0 / 0</strong><span>Voice progress this week</span></article>
+          <article class="metric"><strong id="doneLeft">0 done / 0 left</strong><span>Total weekly target</span></article>
+        </div>
+        <label class="field top-space"><span>User name</span><input type="text" id="profileName" placeholder="Enter your name"></label>
+        <div class="test-actions top-space">
+          <button type="button" class="primary-btn" id="saveProfileBtn">Save Profile</button>
+          <button type="button" class="soft-btn" id="notifyBtn">Enable Notifications</button>
+        </div>
+        <p class="muted-note" id="profileStatus">Weekly targets reset when a new week starts.</p>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-head"><h2>Exam Order</h2><span>Until paper</span></div>
+        <div class="schedule-list">
+          {% for item in exam_timetable.schedule %}
+          <article class="schedule-item">
+            <strong>{{ item.date }}</strong>
+            <p>{{ item.subject }}</p>
+            <div class="countdown-clock compact" data-countdown="{{ item.exam_start_iso }}">
+              <span class="countdown-segment"><strong data-unit="days">00</strong><small>Days</small></span>
+              <span class="countdown-divider">:</span>
+              <span class="countdown-segment"><strong data-unit="hours">00</strong><small>Hr</small></span>
+              <span class="countdown-divider">:</span>
+              <span class="countdown-segment"><strong data-unit="minutes">00</strong><small>Min</small></span>
+              <span class="countdown-divider">:</span>
+              <span class="countdown-segment"><strong data-unit="seconds">00</strong><small>Sec</small></span>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel top-space">
+      <div class="panel-head"><h2>Task List</h2><span>Type 5, read 7</span></div>
+      <div id="taskList" class="task-list"></div>
+    </section>
+  </main>
+  <script>
+    window.taskQuestions = {{ all_questions_json|safe }};
+  </script>
+  <script src="{{ url_for('static', filename='app.js', v='2') }}"></script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDA (Big Data Analytics) - Study Dashboard</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='2') }}">
+  <style>
+    .bda-subject-hero {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      padding: 3rem 1rem;
+      color: white;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+    }
+
+    .bda-subject-hero h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 800;
+    }
+
+    .bda-subject-hero p {
+      margin: 0.5rem 0 0 0;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .bda-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .bda-stat-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .bda-stat-card strong {
+      display: block;
+      font-size: 2rem;
+      color: #1e40af;
+      margin-bottom: 0.5rem;
+    }
+
+    .bda-stat-card span {
+      display: block;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .bda-unit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .bda-unit-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .bda-unit-card:hover {
+      border-color: #1e40af;
+      box-shadow: 0 8px 16px rgba(30, 64, 175, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .bda-unit-header {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .bda-unit-header h3 {
+      margin: 0 0 0.5rem 0;
+      color: #1e40af;
+      font-size: 1.2rem;
+    }
+
+    .bda-unit-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .bda-unit-badge {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .bda-unit-badge.critical {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .bda-unit-body {
+      padding: 1rem;
+    }
+
+    .bda-unit-topics {
+      font-size: 0.9rem;
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .bda-unit-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .bda-unit-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .bda-unit-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .bda-unit-link {
+      background: #1e40af;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .bda-unit-link:hover {
+      background: #1e3a8a;
+    }
+
+    .bda-marks-summary {
+      background: #f0f9ff;
+      border-left: 4px solid #1e40af;
+      padding: 1.5rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+    }
+
+    .bda-marks-summary h3 {
+      margin: 0 0 1rem 0;
+      color: #1e40af;
+    }
+
+    .bda-marks-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .bda-marks-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .bda-marks-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .bda-marks-table strong {
+      color: #1e40af;
+    }
+
+    .bda-priority-high {
+      background: #fef2f2;
+    }
+
+    .bda-priority-high strong {
+      color: #991b1b;
+    }
+
+    .bda-section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 2rem 0 1rem 0;
+      border-bottom: 2px solid #1e40af;
+      padding-bottom: 0.5rem;
+    }
+
+    .bda-quick-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0;
+    }
+
+    .bda-quick-link {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .bda-quick-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+    }
+
+    .page-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body data-page="bda-subject">
+  <main class="page-shell">
+    <section class="bda-subject-hero">
+      <h1>BDA (Big Data Analytics)</h1>
+      <p>Master Hadoop, MapReduce, NoSQL, Hive, Pig, and Spark for exam success</p>
+    </section>
+
+    <section class="bda-stats-grid">
+      <div class="bda-stat-card">
+        <strong>5</strong>
+        <span>Units to Master</span>
+      </div>
+      <div class="bda-stat-card">
+        <strong>{{ total_questions }}</strong>
+        <span>Questions</span>
+      </div>
+      <div class="bda-stat-card">
+        <strong>70</strong>
+        <span>Total Marks</span>
+      </div>
+      <div class="bda-stat-card">
+        <strong>{{ diagram_questions }}</strong>
+        <span>Diagram Questions</span>
+      </div>
+    </section>
+
+    <div class="bda-marks-summary">
+      <h3>📊 Syllabus Marks Distribution</h3>
+      <table class="bda-marks-table">
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td><strong>Topic</strong></td>
+          <td><strong>Marks</strong></td>
+          <td><strong>Priority</strong></td>
+        </tr>
+        {% for item in marks %}
+        <tr {% if item.get('highlight') %}class="bda-priority-high"{% endif %}>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.topic }}</td>
+          <td><strong>{{ item.marks }}</strong></td>
+          <td>{{ item.get('priority', 'Standard') }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="bda-quick-links">
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=1) }}" class="bda-quick-link">📖 Unit 1: Basics</a>
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=2) }}" class="bda-quick-link">⚙️ Unit 2: Hadoop</a>
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=3) }}" class="bda-quick-link">🗄️ Unit 3: NoSQL</a>
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=4) }}" class="bda-quick-link">🔍 Unit 4: Hive & Pig</a>
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=5) }}" class="bda-quick-link">⚡ Unit 5: Spark</a>
+    </div>
+
+    <h2 class="bda-section-title">📚 All Units</h2>
+    <div class="bda-unit-grid">
+      {% for unit in units %}
+      <div class="bda-unit-card">
+        <div class="bda-unit-header">
+          <h3>{{ unit.title }}</h3>
+          <div class="bda-unit-meta">
+            <span class="bda-unit-badge {% if 'CRITICAL' in unit.priority %}critical{% endif %}">{{ unit.marks }}</span>
+            <span class="bda-unit-badge">{{ unit.priority }}</span>
+          </div>
+        </div>
+
+        <div class="bda-unit-body">
+          <div class="bda-unit-topics">
+            <strong>Topics:</strong><br>
+            {% for topic in unit.syllabus_topics[:3] %}
+              • {{ topic }}<br>
+            {% endfor %}
+            {% if unit.syllabus_topics|length > 3 %}
+              • ... and {{ unit.syllabus_topics|length - 3 }} more
+            {% endif %}
+          </div>
+
+          <div class="bda-unit-footer">
+            <div class="bda-unit-stats">
+              <span>📝 {{ unit.total_4m_questions }} (4/6M)</span>
+              <span>📊 {{ unit.total_diagram_questions }} 🖼️</span>
+            </div>
+            <a href="{{ url_for('unit_page', subject_key='bda', unit_number=unit.number) }}" class="bda-unit-link">
+              Study →
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h2 class="bda-section-title">⭐ Most Important Questions</h2>
+    <div class="bda-unit-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+      {% for item in important_bank %}
+      <div class="bda-unit-card" style="border-left: 4px solid {% if 'CRITICAL' in item.priority %}#dc2626{% elif 'Most Important' in item.priority %}#ea580c{% else %}#f59e0b{% endif %};">
+        <div class="bda-unit-header">
+          <h3 style="margin: 0; font-size: 1rem;">{{ item.unit }}</h3>
+          <span class="bda-unit-badge" style="margin-top: 0.5rem; display: inline-block;">{{ item.priority }}</span>
+        </div>
+        <div class="bda-unit-body">
+          <ul style="margin: 0; padding-left: 1.5rem; font-size: 0.9rem; line-height: 1.6;">
+            {% for q in item.items[:4] %}
+            <li>{{ q.stars }} {{ q.text }}</li>
+            {% endfor %}
+            {% if item.items|length > 4 %}
+            <li style="color: #6b7280;">... and {{ item.items|length - 4 }} more</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h2 class="bda-section-title">✅ Study Tips for BDA</h2>
+    <div style="background: #f0f9ff; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+      <ul style="line-height: 2; color: #1f2937;">
+        <li><strong>Unit 2 & 5 are CRITICAL:</strong> Together worth 32 marks (45% of total). Focus here first.</li>
+        <li><strong>Diagrams Matter:</strong> Unit 2 & 5 have heavy diagram questions. Study and reproduce HDFS, Hadoop Ecosystem, MapReduce flow, YARN, and Spark architecture.</li>
+        <li><strong>Differentiation Questions:</strong> CAP Theorem, Structured vs Unstructured data, Hive vs Pig - appear frequently. Always use table format.</li>
+        <li><strong>Architecture Questions:</strong> Questions 302, 303, 304, 307, 605, 608 account for significant marks. Understand component relationships deeply.</li>
+        <li><strong>Real-World Applications:</strong> Every concept connects to real problems (fraud detection, streaming analytics, data warehousing). Relate answers to practical use.</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js', v='2') }}"></script>
+</body>
+</html>

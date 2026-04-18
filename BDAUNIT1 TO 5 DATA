@@ -1,0 +1,517 @@
+UNIT 1 — EXACT (NO CHANGE)
+Q1. Classify Big Data into three primary types with one example each.
+Structured Data: Data organized in a fixed format or tabular structure. (Example: Relational Databases / SQL Tables).
+Semi-Structured Data: Data that does not use traditional tables but contains tags or markers to separate elements. (Example: XML files, JSON files, Emails).
+Unstructured Data: Data with no specific format, sequence, or structure. (Example: Videos, Audio files, Social media posts).
+Q2. Define Big Data and Big Data Analytics. State any two needs for Big Data Analytics.
+
+• Big Data: Extremely large and complex datasets that traditional data processing applications cannot manage, store, or analyze effectively.
+
+• Big Data Analytics: The advanced process of examining Big Data to uncover hidden patterns, unknown correlations, market trends, and customer preferences.
+
+• Needs:
+
+To make faster, more accurate data-driven business decisions.
+To provide highly personalized customer recommendations and improve user experience.
+Q3. List and Define Big Data Types
+Structured: Highly organized data that can be easily stored, accessed, and processed in fixed formats (like rows and columns).
+Unstructured: Raw, unorganized data that cannot be stored in traditional relational databases (like images or text documents).
+Semi-Structured: A mix of both; it lacks a strict relational database structure but contains structural tags/keys (like HTML or JSON).
+Q4. State any four key features of the Hadoop framework.
+Open Source: It is a free, open-source project managed by the Apache Software Foundation.
+Distributed Storage: It stores massive files across multiple independent computers (nodes) using HDFS.
+Fault Tolerance: It automatically replicates data across multiple nodes, ensuring no data is lost if a single hardware node fails.
+High Scalability: It allows organizations to easily add hundreds of new computer nodes to the cluster without downtime.
+Q5. List any four HDFS commands used for interacting with files.
+hdfs dfs -ls : Lists all files and directories in the specified HDFS path.
+hdfs dfs -mkdir : Creates a new directory in HDFS.
+hdfs dfs -put : Copies a file from the local file system into HDFS.
+hdfs dfs -cat : Displays the contents of a file stored in HDFS.
+Q6. What is a "Key-Value pair" in the context of MapReduce?
+
+In MapReduce, all input and output data must be formatted as Key-Value pairs.
+
+• The "Key" acts as a unique identifier or category (e.g., a specific word in a document).
+
+• The "Value" represents the data or metric associated with that key (e.g., the frequency/count of that word). The MapReduce algorithm groups and aggregates data based entirely on these keys.
+
+Q7. State the primary purpose of using NoSQL databases in Big Data management.
+
+The primary purpose of NoSQL (Not Only SQL) databases is to handle massive volumes of unstructured and semi-structured data at high speeds. They provide flexible, schema-less data models and high horizontal scalability, which traditional Relational Databases (RDBMS) cannot offer.
+
+Q8. List and Define Hive Built-in functions.
+
+Apache Hive provides various built-in functions to process data easily:
+
+Mathematical Functions: Performs math operations on data (e.g., ROUND(), SQRT()).
+String Functions: Manipulates text and string values (e.g., UPPER(), LENGTH(), CONCAT()).
+Date Functions: Extracts and manipulates date and time values (e.g., YEAR(), DATEDIFF()).
+Aggregate Functions: Performs calculations on multiple rows to return a single summarized value (e.g., SUM(), AVG(), COUNT()).
+Q9. List any two characteristics and two limitations of Apache Hive.
+
+• Characteristics:
+
+It uses a simple, SQL-like querying language called HiveQL.
+It translates these SQL queries in the background into complex MapReduce jobs automatically.
+
+• Limitations:
+
+It is not suitable for Real-Time queries or OLTP (Online Transaction Processing).
+It suffers from high latency (queries take time to execute due to MapReduce overhead).
+🔴 4/6 MARK — EXACT (NO CHANGE)
+⭐ Q1. Differentiate between Structured, Semi-structured, and Unstructured data. [IMP]
+
+➡️ DIAGRAM REQUIRED (TABLE)
+
+Parameters | Structured Data | Semi-Structured Data | Unstructured Data
+
+Definition:
+Data that is highly organized, strictly formatted, and fits neatly into fixed fields.
+Data that does not reside in a relational database but has organizational properties like tags or keys.
+Raw data that has absolutely no predefined format, sequence, or structural organization.
+
+Schema:
+Strictly follows a predefined schema (Schema-on-write).
+Self-describing schema (Schema-on-read) using tags/markers.
+Completely schema-less.
+
+Storage:
+Stored in traditional Relational Databases (RDBMS) like MySQL, Oracle.
+Stored in NoSQL databases, XML/JSON files, or Document stores.
+Stored in Data Lakes, Hadoop (HDFS), or NoSQL databases.
+
+Searchability:
+Extremely easy to search, query, and analyze using standard SQL.
+Moderately easy to search using specific parsing tools.
+Highly difficult to search and analyze; requires advanced AI/ML or Big Data tools.
+
+Volume:
+Represents a very small percentage (around 10-20%) of all enterprise data.
+Represents a moderate percentage of enterprise data.
+Represents the vast majority (80%+) of all global data generated today.
+
+Examples:
+Employee tables, Bank transaction records, Excel spreadsheets.
+Emails, XML files, JSON documents, Web server logs.
+Videos (YouTube), Audio files, Images, raw social media posts.
+
+⭐ Q2. Explain the core characteristics of Big Data (Volume, Velocity, Variety, Veracity) with real-world examples. [IMP]
+
+The core characteristics of Big Data are traditionally defined by the "4 Vs":
+
+Volume (Scale of Data):
+Explanation: Refers to the unimaginably massive amount of data generated every second. We are no longer talking about Gigabytes, but Terabytes, Petabytes, and Exabytes.
+Real-World Example: Facebook stores over 300 Petabytes of user data, and hundreds of hours of video are uploaded to YouTube every single minute.
+Velocity (Speed of Data):
+Explanation: Refers to the unprecedented speed at which new data is being generated, processed, and analyzed. Big data often requires real-time or near-real-time processing.
+Real-World Example: Millions of stock market trades happening in milliseconds, or credit card companies analyzing swipe data instantly to detect and block fraudulent transactions before the receipt prints.
+Variety (Diversity of Data):
+Explanation: Refers to the different forms and formats of data. Data no longer comes just in neat rows and columns (structured); it comes in highly diverse formats (unstructured and semi-structured).
+Real-World Example: A smart city network collects structured data from traffic sensors, semi-structured JSON data from weather APIs, and unstructured video data from CCTV cameras simultaneously.
+Veracity (Uncertainty of Data):
+Explanation: Refers to the quality, trustworthiness, and accuracy of the data. When dealing with massive volumes, data is often messy, incomplete, or contains "noise."
+Real-World Example: Twitter data is heavily used for sentiment analysis, but tweets often contain typos, slang, fake news, or bot-generated spam, making the data highly uncertain.
+⭐ Q3. Describe the Big Data Processing Architecture Design with a neat block diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Big Data Processing Architecture Design: A standard Big Data architecture handles the massive flow of data from its raw creation all the way to final business analysis. It is divided into distinct logical layers:
+
+Data Sources Layer: The origin of the data. Includes relational databases, enterprise applications, IoT sensors, social media feeds, and server logs.
+Data Ingestion / Collection Layer: Responsible for acquiring data from the sources. Uses tools like Apache Kafka (for real-time streaming data) or Apache Sqoop (for batch loading SQL data).
+Data Storage Layer: Since the data is massive, it requires distributed storage systems. Data is securely dumped into systems like Hadoop Distributed File System (HDFS), Cloud Data Lakes (AWS S3), or NoSQL databases (HBase).
+Data Processing Layer: The core engine that cleans, transforms, and analyzes the raw data.
+• Batch Processing: Handled by Hadoop MapReduce or Apache Spark for massive historical datasets.
+• Real-Time Processing: Handled by Apache Storm or Spark Streaming for immediate insights.
+Data Consumption / Visualization Layer: The final output layer where processed data is sent to Business Intelligence (BI) tools (like Tableau or PowerBI) to create dashboards, reports, and predictive models for business users.
+
+
+
+UNIT 2: Introduction to Hadoop and MapReduce
+✅ 2 MARK QUESTIONS (Exact)
+Q1. List any four HDFS commands used for interacting with files.
+hdfs dfs -ls : Lists all files and directories in the specified HDFS path.
+hdfs dfs -mkdir : Creates a new directory in HDFS.
+hdfs dfs -put : Copies a file from the local file system into HDFS.
+hdfs dfs -cat : Displays the contents of a file stored in HDFS.
+Q2. What is a "Key-Value pair" in the context of MapReduce?
+
+In MapReduce, all input and output data must be formatted as Key-Value pairs.
+
+• The "Key" acts as a unique identifier or category (e.g., a specific word in a document).
+
+• The "Value" represents the data or metric associated with that key (e.g., the frequency/count of that word). The MapReduce algorithm groups and aggregates data based entirely on these keys.
+
+✅ 4/6 MARK QUESTIONS (Exact)
+⭐ Q1. Explain the core components of the Hadoop Ecosystem with a suitable diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Hadoop Ecosystem: Apache Hadoop is not just a single application; it is a massive ecosystem of open-source projects designed to store and process huge datasets in a distributed computing environment.
+
+Core Components:
+HDFS (Hadoop Distributed File System):
+The fundamental storage layer. It breaks massive files into smaller blocks and distributes them across thousands of physical computers (nodes) for highly reliable storage.
+MapReduce:
+The original data processing engine. It allows developers to write programs that process massive amounts of unstructured data in parallel across the distributed cluster.
+YARN (Yet Another Resource Negotiator):
+The cluster resource management layer. It acts like the "Operating System" of Hadoop, dynamically allocating CPU and RAM to different applications running on the cluster.
+Extended / Essential Ecosystem Tools:
+Apache Hive:
+A data warehouse infrastructure that provides a SQL-like interface (HiveQL) to query data stored in HDFS without writing complex Java MapReduce code.
+Apache Pig:
+A high-level scripting language (Pig Latin) used to write complex data transformations and ETL pipelines easily.
+Apache Sqoop:
+A tool used to efficiently transfer bulk data between Hadoop and traditional Relational Databases (RDBMS).
+Apache HBase:
+A highly scalable NoSQL database built on top of HDFS, providing random, real-time read/write access to Big Data.
+⭐ Q2. Explain the architecture and functioning of HDFS (Hadoop Distributed File System) for data storage. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+HDFS Architecture: HDFS operates on a highly reliable Master/Slave architecture designed specifically to store massive files across commodity hardware.
+
+Core Components & Functioning:
+NameNode (The Master):
+Function: It is the central controller of the HDFS cluster. It does not store the actual data.
+
+Instead, it maintains the Metadata (the filesystem namespace, directory tree, file permissions, and exactly which DataNodes contain which blocks of a specific file).
+
+It tracks the "health" of the cluster by constantly receiving "Heartbeat" signals from the slaves.
+
+DataNodes (The Slaves):
+Function: These are the actual worker machines (hundreds or thousands of them). They physically store the actual raw data.
+
+Blocks: In HDFS, massive files (e.g., a 1GB log file) are split into smaller, fixed-size chunks called Blocks (default size is 128 MB). These blocks are distributed across multiple DataNodes.
+
+Replication (Fault Tolerance):
+To guarantee data is never lost if a physical hard drive crashes, HDFS automatically creates copies of every single block.
+
+The default Replication Factor is 3. (e.g., Block 1 of a file is stored on DataNode A, copied to DataNode B, and copied again to DataNode C).
+
+Secondary NameNode:
+It is not a backup NameNode. It acts as an assistant that periodically merges namespace image files to prevent the main NameNode's RAM from overflowing.
+Q3. Describe the MapReduce Programming Model.
+
+Concept: MapReduce is a core distributed programming model (originally developed by Google) used to write applications that process massive amounts of data in parallel across a massive cluster of thousands of computers.
+
+The Master/Slave Architecture:
+
+• JobTracker (Master):
+Receives the job from the client, divides it into smaller tasks, and schedules them on the worker nodes.
+
+• TaskTracker (Slave):
+Runs on every worker node and executes the actual data processing tasks assigned by the JobTracker.
+
+The Two Fundamental Phases:
+The Map Phase:
+The raw input data is split into independent chunks.
+
+The "Mapper" function processes these chunks in parallel on different nodes. It filters, sorts, or parses the data.
+
+Output: It generates a massive list of intermediate Key-Value pairs.
+
+The Reduce Phase:
+The intermediate Key-Value pairs generated by the Mappers are shuffled, sorted, and grouped strictly by their "Keys".
+
+The "Reducer" function receives these grouped keys and aggregates, sums, or summarizes the values.
+
+Output: The final, condensed result is written back to HDFS.
+
+⭐ Q4. Explain the MapReduce processing steps in detail, including Map Tasks, Combiners, Partitioning, and Reduce Tasks. [IMP]
+
+A complete MapReduce job executes in several strict, sequential steps to process Big Data efficiently.
+
+Input Splits & Record Reader:
+The massive input file in HDFS is logically divided into Input Splits (usually matching the 128MB block size). The Record Reader converts this raw data into basic Key-Value pairs and feeds them to the Mapper.
+Map Task:
+The user-defined Map function executes the core business logic (like filtering or tokenizing). It processes the input and generates millions of intermediate Key-Value pairs.
+Combiner (Optional but Highly Recommended):
+A Combiner is essentially a "Mini-Reducer" that runs locally on the exact same node as the Mapper immediately after the Map phase.
+
+Function: It performs a local aggregation before sending the data over the network.
+
+Partitioner:
+The Partitioner decides exactly which Reducer will receive which Key-Value pairs.
+
+It usually uses a hash function to guarantee that all values associated with the same Key are sent to the same Reduce Task.
+
+Shuffle and Sort:
+The framework transfers the partitioned data across the network to the assigned Reducers. The data is then automatically grouped and sorted by the Key.
+Reduce Task:
+The user-defined Reduce function receives a Key and a list of all associated values. It aggregates them and writes the final result to HDFS.
+⭐ Q5. Describe the functioning of YARN (Hadoop 2 Execution Model) with its architecture diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Concept of YARN:
+YARN (Yet Another Resource Negotiator) was introduced in Hadoop 2.0 to solve the bottlenecks of the original MapReduce framework. It separates resource management from data processing.
+
+Architecture and Functioning:
+ResourceManager (RM):
+The master daemon that manages cluster resources (CPU, RAM).
+NodeManager (NM):
+Runs on each worker node and monitors resource usage.
+Container:
+A logical bundle of resources (CPU + RAM) where tasks run.
+ApplicationMaster (AM):
+Each application has its own AM. It negotiates resources and manages task execution.
+🔥 UNIT 2 SUMMARY (VERY IMPORTANT)
+
+👉 This unit = highest marks + diagrams
+
+MUST STUDY:
+Hadoop Ecosystem
+HDFS
+MapReduce
+YARN
+
+
+
+UNIT 3: NoSQL Databases and Big Data Management
+✅ 4/6 MARK QUESTIONS (Exact)
+⭐ Q1. State and explain the CAP theorem in detail with a suitable diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED (Triangle: C–A–P)
+
+The CAP Theorem: The CAP theorem (also known as Brewer's Theorem) is a foundational principle for distributed database systems. It states that it is mathematically impossible for a distributed data store to simultaneously guarantee more than two out of the following three properties:
+
+1. Consistency (C):
+
+Explanation: Every read operation from the database receives the most recent write (the latest updated data) or an error. In a distributed system, this means all nodes see exactly the same data at the exact same time, regardless of which node the client connects to.
+
+2. Availability (A):
+
+Explanation: Every request sent to the database receives a valid, non-error response, without the guarantee that it contains the most recent write. The system remains operational and highly available even if some nodes fail.
+
+3. Partition Tolerance (P):
+
+Explanation: The system continues to operate flawlessly despite an arbitrary number of messages being dropped or delayed by the network between nodes (a network partition or communication break).
+
+Explanation of the Trade-offs:
+
+Because network failures (Partitions) are an unavoidable reality in large-scale distributed systems like Big Data, a system must be Partition Tolerant (P). Therefore, system designers must choose between Consistency and Availability:
+
+• CP (Consistency + Partition Tolerance): The system prioritizes consistency. It will return an error or timeout rather than return outdated data during a network partition. (e.g., HBase, MongoDB).
+
+• AP (Availability + Partition Tolerance): The system prioritizes availability. It will always return a response, even if it means returning slightly outdated/stale data during a partition. (e.g., Cassandra, CouchDB).
+
+• CA (Consistency + Availability): This is only possible in single-node, non-distributed systems like traditional RDBMS (MySQL, Oracle) where network partitions don't happen.
+
+Q2. Explain the concept of schema-less data models in NoSQL.
+
+Concept of Schema-less Models: In traditional Relational Databases (RDBMS), data is strictly bound by a rigid "Schema." Before inserting any data, a database administrator must define the exact number of columns, their data types, and limits. If you want to add a new field later, you have to alter the entire table structure, which is time-consuming.
+
+NoSQL databases introduce the concept of a Schema-less (or flexible schema) Data Model:
+
+Dynamic Structure: In a schema-less database, there is no predefined structure. You do not need to define tables or columns before inserting data into the database.
+Document Autonomy: Every single record (called a document) in the database can have an entirely different internal structure. For example, Document A might have 3 fields (Name, Age, Email), while Document B in the exact same collection might have 5 completely different fields (Name, Address, Phone, Hobbies, Gender).
+Agile Development: It allows software developers to continuously modify, add, or remove data fields on the fly as the application evolves, without causing system downtime or requiring complex database migrations.
+Handling Unstructured Data: It is perfectly suited for Big Data applications that ingest highly variable, unstructured, or semi-structured data (like JSON feeds from different IoT sensors, social media APIs, or web logs).
+⭐ Q3. Describe the Key-Value Store and Document Store architecture patterns of NoSQL. [IMP]
+1. Key-Value Store Architecture:
+
+• Description: This is the simplest, most basic, and fastest form of a NoSQL database. It acts essentially as a massive, distributed hash table.
+
+• Architecture: Every single piece of data is stored as a paired entity: a unique Key (the identifier) and a Value (the actual data payload).
+
+• Characteristics: The database treats the "Value" as an opaque blob. It doesn't know or care what is inside the value (it could be a string, a serialized object, an image, or a JSON blob). Because of this, data can only be queried by its exact Key.
+
+• Advantages: Blazing fast read/write speeds and highly scalable. Excellent for caching, shopping carts, and session management.
+
+• Examples: Redis, Amazon DynamoDB, Riak.
+
+2. Document Store Architecture:
+
+• Description: An evolution of the Key-Value store. Instead of storing opaque, unreadable blobs, the "Value" is a highly structured, semi-structured document (usually in JSON, BSON, or XML format).
+
+• Architecture: Data is logically grouped into "Collections" (similar to tables) and stored as "Documents" (similar to rows).
+
+• Characteristics: Unlike Key-Value stores, the database understands the internal structure of the document. This allows users to query, filter, and index the data based on the actual contents inside the document (e.g., "Find all documents where Age > 25 and City = 'Mumbai'").
+
+• Advantages: Highly flexible schema, perfect for content management systems, e-commerce catalogs, and real-time user profile analytics.
+
+• Examples: MongoDB, Couchbase, CouchDB.
+
+⭐ Q4. Explain various NoSQL data architecture patterns (Key-Value, Document, Tabular, Object, Graph store). [IMP]
+
+NoSQL databases are broadly classified into 5 main architecture patterns based on how they store and retrieve data:
+
+Key-Value Store: Stores data as a simple hash table where a unique key is mapped to a value (blob). Highly optimized for fast, simple lookups based on the key. (Examples: Redis, DynamoDB).
+Document Store: Stores data as flexible, semi-structured documents (like JSON or BSON). It allows complex querying against the specific nested data inside the document. (Examples: MongoDB, CouchDB).
+Column-Family (Tabular) Store: Instead of storing data sequentially in rows like an RDBMS, it stores data in column families. It is highly optimized for massive write operations and reading specific columns across millions of records without needing to read the entire row into memory. (Examples: Apache Cassandra, HBase).
+Graph Store: Stores data in nodes (entities) and edges (relationships). It is explicitly designed to map, traverse, and query highly complex, highly interconnected relationships faster than traditional JOINs. (Examples: Neo4j, Amazon Neptune - widely used for social networks and recommendation engines).
+Object Store: Stores data purely as objects, exactly as they are created and used in Object-Oriented Programming (OOP) languages (like Java, C#, or C++).
+🔥 UNIT 3 SUMMARY (IMPORTANT)
+
+👉 Weight = 12 marks
+👉 Mostly theory + 1 diagram (CAP)
+
+⚠️ MUST DO QUESTIONS
+CAP Theorem ⭐
+NoSQL Architecture ⭐
+Key-Value vs Document ⭐
+
+
+
+UNIT 4: Hive and Pig
+✅ 2 MARK QUESTIONS (Exact)
+Q1. Define Apache Hive.
+
+Apache Hive is a data warehouse infrastructure built on top of Hadoop that provides a SQL-like interface (HiveQL) for querying and analyzing large datasets stored in HDFS. It converts HiveQL queries into MapReduce jobs for execution.
+
+Q2. What is HiveQL?
+
+HiveQL (Hive Query Language) is a SQL-like language used in Apache Hive to perform queries, data analysis, and data manipulation on large datasets stored in Hadoop.
+
+Q3. Define Apache Pig.
+
+Apache Pig is a high-level platform for creating programs that run on Hadoop. It uses a scripting language called Pig Latin to process and analyze large datasets.
+
+Q4. What is Pig Latin?
+
+Pig Latin is a high-level scripting language used in Apache Pig to write data transformation and analysis programs.
+
+✅ 4/6 MARK QUESTIONS (Exact)
+⭐ Q1. Explain Hive Architecture with neat diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Hive Architecture: Apache Hive architecture is designed to enable easy data querying using HiveQL by converting queries into MapReduce jobs.
+
+Components:
+User Interface (UI):
+Users interact with Hive through CLI, Web UI, or JDBC/ODBC interfaces.
+Driver:
+Receives queries from the user and manages their lifecycle. It creates execution plans and coordinates execution.
+Compiler:
+Parses the HiveQL query, performs semantic analysis, and converts it into an execution plan.
+Metastore:
+Stores metadata information such as table schemas, column types, and data location in HDFS.
+Execution Engine:
+Executes the query plan by submitting jobs to Hadoop (MapReduce).
+Hadoop (HDFS + MapReduce):
+Provides storage and processing infrastructure.
+Q2. Explain features of Hive.
+SQL-like language (HiveQL) for easy querying.
+Supports large-scale data processing.
+Schema-on-read approach.
+Integrates with Hadoop ecosystem.
+Supports partitioning and bucketing.
+⭐ Q3. Differentiate between Hive, Pig, and SQL. [IMP]
+
+👉 (As you instructed → ONLY 2 COLUMN FORMAT)
+
+Hive	Pig
+Uses HiveQL (SQL-like language)	Uses Pig Latin (scripting language)
+Suitable for structured data analysis	Suitable for data flow and transformation
+Easier for SQL users	Easier for programmers
+Query-based approach	Script-based approach
+Q4. Explain Pig Architecture.
+
+Pig Architecture consists of the following components:
+
+Pig Latin Script:
+User writes scripts for data processing.
+Parser:
+Checks syntax and type.
+Logical Plan:
+Creates logical execution steps.
+Optimizer:
+Optimizes the plan.
+Compiler:
+Converts plan into MapReduce jobs.
+Execution Engine:
+Runs jobs on Hadoop.
+🔥 UNIT 4 SUMMARY
+
+👉 Weight = 14 marks
+👉 Mix of theory + 1 diagram
+
+⚠️ MUST DO QUESTIONS
+Hive Architecture ⭐
+Hive vs Pig ⭐
+Pig Architecture
+
+
+
+
+UNIT 5: Spark and Real-Time Analytics
+✅ 2 MARK QUESTIONS (Exact)
+Q1. Define Apache Spark.
+
+Apache Spark is an open-source distributed computing system designed for fast data processing. It provides in-memory computation to process large datasets efficiently.
+
+Q2. What is RDD in Spark?
+
+RDD (Resilient Distributed Dataset) is the fundamental data structure of Spark. It is an immutable, distributed collection of objects that can be processed in parallel.
+
+Q3. What is Spark Streaming?
+
+Spark Streaming is a component of Apache Spark that enables real-time processing of live data streams.
+
+Q4. Define DataFrame in Spark.
+
+A DataFrame is a distributed collection of data organized into named columns, similar to a table in a relational database.
+
+✅ 4/6 MARK QUESTIONS (Exact)
+⭐ Q1. Explain Apache Spark Architecture with neat diagram. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Apache Spark Architecture: Spark follows a master-slave architecture designed for distributed processing.
+
+Components:
+Driver Program:
+Acts as the master. It controls execution, maintains metadata, and schedules tasks.
+Cluster Manager:
+Allocates resources across applications (Standalone, YARN, Mesos).
+Worker Nodes:
+Nodes that perform actual data processing.
+Executors:
+Processes running on worker nodes that execute tasks and store data.
+Tasks:
+Smallest unit of work sent to executors.
+Q2. Explain features of Apache Spark.
+In-memory processing for faster computation.
+Supports batch and real-time processing.
+Fault-tolerant system using lineage.
+Easy integration with Hadoop ecosystem.
+Supports multiple languages (Java, Scala, Python).
+⭐ Q3. Explain RDD in detail. [IMP]
+
+RDD (Resilient Distributed Dataset) is the core abstraction of Apache Spark.
+
+Characteristics:
+Immutable: Once created, it cannot be changed.
+Distributed: Data is divided across multiple nodes.
+Fault-tolerant: Recovers data using lineage.
+Lazy Evaluation: Operations are executed only when an action is performed.
+Operations:
+Transformations: map(), filter(), reduceByKey()
+Actions: collect(), count(), saveAsTextFile()
+⭐ Q4. Explain Spark Streaming architecture. [IMP]
+
+➡️ DIAGRAM REQUIRED
+
+Spark Streaming Architecture: Spark Streaming processes real-time data by dividing it into small batches.
+
+Components:
+Data Sources:
+Kafka, Flume, HDFS, sockets.
+Streaming Engine:
+Splits data into micro-batches.
+Processing:
+Applies transformations using Spark.
+Output:
+Stores results in databases or dashboards.
+🔥 UNIT 5 SUMMARY
+
+👉 Weight = 16 marks (HIGH)
+👉 Mix of theory + diagrams
+
+⚠️ MUST DO QUESTIONS
+Spark Architecture ⭐
+RDD ⭐
+Spark Streaming ⭐
+

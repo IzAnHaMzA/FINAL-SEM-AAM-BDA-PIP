@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject.name }} - Unit {{ unit.number }} - Study</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='2') }}">
+  <style>
+    .bda-unit-page { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+    
+    .bda-unit-top { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+    .bda-unit-top h1 { margin: 0 0 1rem 0; font-size: 2.2rem; }
+    .bda-unit-top .meta { display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.95rem; opacity: 0.9; }
+    
+    .bda-filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .bda-filter-btn { padding: 0.5rem 1rem; background: white; border: 2px solid #e5e7eb; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+    .bda-filter-btn.active { background: #1e40af; color: white; border-color: #1e40af; }
+    .bda-filter-btn:hover { border-color: #1e40af; }
+    
+    .bda-section { margin-bottom: 2rem; }
+    .bda-section-title { font-size: 1.3rem; font-weight: 700; color: #1f2937; border-bottom: 3px solid #1e40af; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+    
+    .bda-question-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s; }
+    .bda-question-card:hover { border-color: #1e40af; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1); }
+    
+    .bda-question-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .bda-question-number { font-weight: 700; color: #1e40af; font-size: 1.1rem; }
+    
+    .bda-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .bda-badge { background: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .bda-badge.marks { background: #fef3c7; color: #92400e; }
+    .bda-badge.importance { background: #fee2e2; color: #991b1b; }
+    .bda-badge.diagram { background: #d1fae5; color: #065f46; }
+    
+    .bda-question-text { font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; }
+    .bda-question-answer { background: #f9fafb; border-left: 3px solid #1e40af; padding: 1rem; border-radius: 4px; margin-top: 1rem; max-height: 0; overflow: hidden; transition: all 0.3s; }
+    .bda-question-answer.show { max-height: 2000px; }
+    .bda-question-answer pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Inter', sans-serif; font-size: 0.9rem; line-height: 1.6; margin: 0; color: #374151; }
+    
+    .bda-diff-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+    .bda-diff-table th, .bda-diff-table td { border: 1px solid #d1d5db; padding: 0.75rem; text-align: left; }
+    .bda-diff-table th { background: #f3f4f6; font-weight: 700; color: #1f2937; }
+    .bda-diff-table tr:nth-child(even) { background: #f9fafb; }
+    
+    .bda-diagram-section { background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+    .bda-diagram-preview { max-width: 100%; max-height: 300px; border-radius: 4px; margin-top: 1rem; cursor: pointer; transition: transform 0.3s; }
+    .bda-diagram-preview:hover { transform: scale(1.05); }
+    
+    .bda-toggle-btn { background: #1e40af; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 0.5rem; transition: all 0.3s; }
+    .bda-toggle-btn:hover { background: #1e3a8a; }
+    
+    .bda-copy-btn { background: #10b981; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; }
+    .bda-copy-btn:hover { background: #059669; }
+    
+    .bda-syllabus-box { background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 6px; margin-bottom: 2rem; }
+    .bda-syllabus-box h3 { margin: 0 0 1rem 0; color: #065f46; }
+    .bda-syllabus-box ul { margin: 0; padding-left: 1.5rem; }
+    .bda-syllabus-box li { margin: 0.5rem 0; color: #374151; }
+    
+    .bda-importance-high { border-left: 4px solid #dc2626; }
+    .bda-importance-medium { border-left: 4px solid #f59e0b; }
+    .bda-importance-low { border-left: 4px solid #6b7280; }
+    
+    .bda-nav-buttons { display: flex; gap: 1rem; margin-top: 2rem; }
+    .bda-nav-btn { padding: 0.75rem 1.5rem; background: #1e40af; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.3s; }
+    .bda-nav-btn:hover { background: #1e3a8a; transform: translateY(-2px); }
+    .bda-nav-btn.back { background: #6b7280; }
+    .bda-nav-btn.back:hover { background: #4b5563; }
+    
+    @media (max-width: 768px) {
+      .bda-question-header { flex-direction: column; }
+      .bda-filter-bar { justify-content: center; }
+      .bda-unit-top .meta { flex-direction: column; gap: 0.5rem; }
+    }
+
+    .bda-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); }
+    .bda-modal.show { display: flex; align-items: center; justify-content: center; }
+    .bda-modal-content { background: white; padding: 1rem; border-radius: 8px; max-width: 90vw; max-height: 90vh; overflow: auto; position: relative; }
+    .bda-modal-close { position: absolute; top: 10px; right: 15px; font-size: 2rem; cursor: pointer; color: #6b7280; }
+    .bda-modal-close:hover { color: #1f2937; }
+    .bda-modal img { width: 100%; height: auto; border-radius: 4px; }
+
+  </style>
+</head>
+<body data-page="bda-unit">
+  <main class="bda-unit-page">
+    <a href="{{ url_for('subject_page', subject_key='bda') }}" style="color: #1e40af; text-decoration: none; margin-bottom: 1rem; display: inline-block;">← Back to BDA</a>
+
+    <!-- SECTION 1: UNIT HEADER -->
+    <section class="bda-unit-top">
+      <h1>{{ unit.title }}</h1>
+      <div class="meta">
+        <div>📚 <strong>{{ unit.marks }}</strong></div>
+        <div>🎯 <strong>Priority:</strong> {{ unit.priority }}</div>
+        <div>⏱️ <strong>Learning:</strong> {{ unit.learning_hours }}</div>
+        <div>📝 <strong>Questions:</strong> {{ unit.questions|length }}</div>
+      </div>
+    </section>
+
+    <!-- SYLLABUS MAPPING -->
+    <section class="bda-syllabus-box">
+      <h3>📋 Syllabus Topics Covered</h3>
+      <ul>
+        {% for topic in unit.syllabus_topics %}
+        <li>{{ topic }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- STUDY MODE FILTER -->
+    <div class="bda-filter-bar">
+      <button class="bda-filter-btn active" onclick="filterQuestions('all')">📚 All Questions</button>
+      <button class="bda-filter-btn" onclick="filterQuestions('important')">⭐ Important Only</button>
+      <button class="bda-filter-btn" onclick="filterQuestions('diagram')">🖼️ Diagrams Only</button>
+      <button class="bda-filter-btn" onclick="filterQuestions('2m')">2️⃣ 2 Marks</button>
+      <button class="bda-filter-btn" onclick="filterQuestions('4m')">4️⃣ 4/6 Marks</button>
+      <button class="bda-filter-btn" onclick="filterQuestions('differentiate')">🔄 Differentiation</button>
+    </div>
+
+    <!-- SECTION 2: IMPORTANT QUESTIONS (SORTED BY IMPORTANCE) -->
+    {% if current_bank and current_bank.items %}
+    <section class="bda-section">
+      <h2 class="bda-section-title">⭐ Most Important Questions ({{ current_bank.priority }})</h2>
+      {% for q in current_bank.items[:6] %}
+      <div class="bda-question-card bda-importance-high" data-filter="important">
+        <div class="bda-question-header">
+          <span class="bda-question-number">{{ q.stars }} {{ q.text[:40] }}...</span>
+          <div class="bda-badges">
+            <span class="bda-badge importance">{{ q.stars }}</span>
+          </div>
+        </div>
+        <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
+        {% set question_obj = unit.questions | selectattr('id', 'equalto', q.question_id) | list | first %}
+        {% if question_obj and question_obj.image_path %}
+        <div style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+          <img src="{{ url_for('static', filename='../' + question_obj.image_path) }}" alt="Diagram" style="max-width: 100%; max-height: 300px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)">
+        </div>
+        {% endif %}
+        <div class="bda-question-answer">
+          <pre>{{ question_obj.answer if question_obj else 'Answer not found' }}</pre>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    <!-- SECTION 3: DIAGRAM QUESTIONS -->
+    {% set diagram_questions = unit.questions|selectattr('has_diagram', 'equalto', True)|list %}
+    {% if diagram_questions %}
+    <section class="bda-section">
+      <h2 class="bda-section-title">🖼️ Questions with Diagrams ({{ diagram_questions|length }} questions)</h2>
+      {% for q in diagram_questions %}
+      <div class="bda-question-card" data-filter="diagram">
+        <div class="bda-question-header">
+          <span class="bda-question-number">{{ q.qno }} - {{ q.question[:50] }}...</span>
+          <div class="bda-badges">
+            <span class="bda-badge marks">{{ q.marks }}</span>
+            <span class="bda-badge diagram">HAS DIAGRAM</span>
+          </div>
+        </div>
+        <div style="background: #f0f9ff; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
+          <p style="margin: 0 0 0.5rem 0;"><strong>📊 Diagram Type:</strong> {{ q.diagram_type|title }}</p>
+          <p style="margin: 0;">💡 This question requires a {{ q.diagram_type|title }} diagram to fully answer.</p>
+        </div>
+        {% if q.image_path %}
+        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+          <img src="{{ url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 350px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
+          <p style="margin: 0.75rem 0 0 0; font-size: 0.9rem; color: #065f46; text-align: center;">📸 Click to view full-size diagram</p>
+        </div>
+        {% endif %}
+        <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
+        <div class="bda-question-answer">
+          <pre>{{ q.answer }}</pre>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    <!-- SECTION 4: DIFFERENTIATION QUESTIONS -->
+    {% set diff_questions = unit.questions|selectattr('type', 'equalto', 'differentiate')|list %}
+    {% if diff_questions %}
+    <section class="bda-section">
+      <h2 class="bda-section-title">🔄 Differentiation Questions (Side-by-Side Format)</h2>
+      {% for q in diff_questions %}
+      <div class="bda-question-card" data-filter="differentiate">
+        <div class="bda-question-header">
+          <span class="bda-question-number">{{ q.qno }} - {{ q.question }}</span>
+          <div class="bda-badges">
+            <span class="bda-badge marks">{{ q.marks }}</span>
+          </div>
+        </div>
+        <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📊 Show Comparison Table</button>
+        <div class="bda-question-answer">
+          <pre>{{ q.answer }}</pre>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    <!-- SECTION 5: ALL QUESTIONS -->
+    <section class="bda-section">
+      <h2 class="bda-section-title">📚 All Questions</h2>
+      {% for q in unit.questions %}
+      <div class="bda-question-card" data-filter="all {% if q.importance == '⭐' %}important{% endif %} {% if q.marks == '2M' %}2m{% else %}4m{% endif %} {% if q.type == 'differentiate' %}differentiate{% endif %} {% if q.has_diagram %}diagram{% endif %}">
+        <div class="bda-question-header">
+          <div>
+            <span class="bda-question-number">{{ q.qno }}</span>
+            <p class="bda-question-text">{{ q.question }}</p>
+          </div>
+          <div class="bda-badges">
+            {% if q.importance %}
+            <span class="bda-badge importance">{{ q.importance }}</span>
+            {% endif %}
+            <span class="bda-badge marks">{{ q.marks }}</span>
+            {% if q.type == 'differentiate' %}
+            <span class="bda-badge" style="background: #f3e8ff; color: #6b21a8;">COMPARE</span>
+            {% endif %}
+            {% if q.has_diagram %}
+            <span class="bda-badge diagram">DIAGRAM</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if q.type == 'differentiate' %}
+        <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📊 Show Comparison</button>
+        {% else %}
+        <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
+        {% endif %}
+        
+        {% if q.image_path %}
+        <div style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+          <p style="margin: 0 0 0.75rem 0; font-weight: 600; color: #1e40af;">🖼️ Diagram Reference</p>
+          <img src="{{ url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 400px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
+          <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6b7280;">💡 Tip: Click on the diagram to view in full size</p>
+        </div>
+        {% endif %}
+        
+        <div class="bda-question-answer">
+          {% if q.type == 'differentiate' %}
+          <pre>{{ q.answer }}</pre>
+          {% else %}
+          <pre>{{ q.answer }}</pre>
+          {% endif %}
+        </div>
+
+        {% if q.page_number %}
+        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #6b7280;">📄 Page: {{ q.page_number }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </section>
+
+    <!-- NAVIGATION -->
+    <div class="bda-nav-buttons">
+      {% if unit.number > 1 %}
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=unit.number-1) }}" class="bda-nav-btn back">← Previous Unit</a>
+      {% endif %}
+      <a href="{{ url_for('subject_page', subject_key='bda') }}" class="bda-nav-btn">📚 All Units</a>
+      {% if unit.number < units|length %}
+      <a href="{{ url_for('unit_page', subject_key='bda', unit_number=unit.number+1) }}" class="bda-nav-btn">Next Unit →</a>
+      {% endif %}
+    </div>
+
+  </main>
+
+  <!-- Image Expansion Modal -->
+  <div id="imageModal" class="bda-modal">
+    <div class="bda-modal-content">
+      <span class="bda-modal-close" onclick="closeImageModal()">&times;</span>
+      <img id="modalImage" src="" alt="Expanded diagram">
+    </div>
+  </div>
+
+  <script>
+    function filterQuestions(filterType) {
+      const allCards = document.querySelectorAll('.bda-question-card');
+      const allButtons = document.querySelectorAll('.bda-filter-btn');
+      
+      allButtons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      allCards.forEach(card => {
+        if (filterType === 'all') {
+          card.style.display = 'block';
+        } else {
+          card.style.display = card.dataset.filter.includes(filterType) ? 'block' : 'none';
+        }
+      });
+    }
+
+    function toggleAnswer(btn) {
+      const answer = btn.nextElementSibling;
+      if (answer && answer.classList.contains('bda-question-answer')) {
+        answer.classList.toggle('show');
+        btn.textContent = answer.classList.contains('show') ? '📖 Hide Answer' : '📖 Show Answer';
+      }
+    }
+
+    function expandImage(img) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      modalImg.src = img.src;
+      modal.classList.add('show');
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.remove('show');
+    }
+
+    // Close modal when clicking outside image
+    document.getElementById('imageModal')?.addEventListener('click', function(event) {
+      if (event.target === this) {
+        closeImageModal();
+      }
+    });
+
+    // Keyboard shortcut to close modal
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeImageModal();
+      }
+    });
+  </script>
+</body>
+</html>

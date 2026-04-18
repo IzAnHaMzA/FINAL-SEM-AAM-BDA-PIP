@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Dashboard</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='2') }}">
+</head>
+<body data-page="dashboard">
+  <main class="page-shell">
+    <section class="panel timetable-panel">
+      <div class="panel-head"><h2>{{ exam_timetable.season }}</h2><span>Exam countdown view</span></div>
+      <div class="time-banner">
+        <strong>{{ exam_timetable.time_label }}</strong>
+        <span>{{ exam_timetable.time_value }}</span>
+      </div>
+      <div class="schedule-list">
+        {% for item in exam_timetable.schedule %}
+        <article class="schedule-item">
+          <strong>{{ item.date }}</strong>
+          <p>{{ item.paper }} - {{ item.subject }}</p>
+          <div class="countdown-clock" data-countdown="{{ item.exam_start_iso }}">
+            <span class="countdown-segment"><strong data-unit="days">00</strong><small>Days</small></span>
+            <span class="countdown-divider">:</span>
+            <span class="countdown-segment"><strong data-unit="hours">00</strong><small>Hr</small></span>
+            <span class="countdown-divider">:</span>
+            <span class="countdown-segment"><strong data-unit="minutes">00</strong><small>Min</small></span>
+            <span class="countdown-divider">:</span>
+            <span class="countdown-segment"><strong data-unit="seconds">00</strong><small>Sec</small></span>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      <div class="panel-head top-space"><h2>Final Order</h2><span>Priority by date</span></div>
+      <ol class="final-order">
+        {% for item in exam_timetable.final_order %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section class="hero-band">
+      <div>
+        <p class="eyebrow">Study Dashboard</p>
+        <h1>Choose a subject and jump straight into unit-wise revision.</h1>
+        <p class="hero-text">Each subject gets its own page, important-question view, unit pages, diagrams, bookmarks, and quick answer checking.</p>
+      </div>
+      <div class="hero-stats">
+        <article class="metric"><strong>{{ subject_cards|length }}</strong><span>Subjects</span></article>
+        <article class="metric"><strong>{{ subject_cards|sum(attribute='units') }}</strong><span>Total units</span></article>
+        <article class="metric"><strong>{{ pdf_files|length }}</strong><span>PDF files in aam_pdf</span></article>
+      </div>
+    </section>
+
+    <section class="unit-nav panel">
+      <a class="unit-link task-link" href="{{ url_for('tasks_page') }}">Open Task Tracker</a>
+    </section>
+
+    <section class="subject-grid">
+      {% for subject in subject_cards %}
+      <a class="subject-card" href="{{ url_for('subject_page', subject_key=subject.key) }}">
+        <p class="eyebrow">{{ subject.code }}</p>
+        <h2>{{ subject.name }}</h2>
+        <p>{{ subject.hero }}</p>
+        <div class="subject-meta">
+          <span>{{ subject.units }} units</span>
+          <span>{{ subject.questions }} questions</span>
+        </div>
+      </a>
+      {% endfor %}
+    </section>
+
+  </main>
+  <script src="{{ url_for('static', filename='app.js', v='2') }}"></script>
+</body>
+</html>

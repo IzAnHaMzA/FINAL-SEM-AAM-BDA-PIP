@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject.name }}</title>
+  <meta name="theme-color" content="#2c8f5b">
+  <link rel="manifest" href="{{ url_for('manifest') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body data-page="subject" data-subject-key="{{ subject.key }}">
+  <main class="page-shell">
+    <section class="hero-band">
+      <div>
+        <p class="eyebrow">{{ subject.code }}</p>
+        <h1>{{ subject.name }}</h1>
+        <p class="hero-text">{{ subject.hero }}</p>
+      </div>
+      <div class="hero-stats">
+        <article class="metric"><strong>{{ units|length }}</strong><span>Units</span></article>
+        <article class="metric"><strong>{{ all_questions|length }}</strong><span>Questions</span></article>
+        <article class="metric"><strong>{{ pdf_files|length }}</strong><span>PDF files in aam_pdf</span></article>
+      </div>
+    </section>
+
+    <section class="unit-nav panel">
+      <a class="unit-link" href="{{ url_for('index') }}">Dashboard</a>
+      <a class="unit-link" href="{{ url_for('tasks_page') }}">Tasks</a>
+      {% for item in units %}
+      <a class="unit-link" href="{{ url_for('unit_page', subject_key=subject.key, unit_number=item.number) }}">UNIT {{ item.number }} - {{ item.title }}</a>
+      {% endfor %}
+    </section>
+
+    <section class="home-grid">
+      <section class="panel">
+        {% if marks %}
+        <div class="panel-head"><h2>{{ subject.code }} Unit-Wise Marks (Out of 70)</h2><span>{{ subject.name }} overview</span></div>
+        <div class="table-wrap top-space">
+          <table class="difference-table">
+            <thead>
+              <tr><th>Unit</th><th>Topic</th><th>Marks</th></tr>
+            </thead>
+            <tbody>
+              {% for row in marks %}
+              <tr class="{% if row.highlight %}marks-highlight{% endif %}">
+                <td>{{ row.unit }}</td>
+                <td>{{ row.topic }}</td>
+                <td>{{ row.marks }}{% if row.highlight %} ⭐{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+        <div class="panel-head top-space"><h2>Important Questions</h2><span>Priority order</span></div>
+        <div class="important-bank">
+          {% for group in important_question_bank %}
+          <section class="important-group important-{{ group.color }}">
+            <div class="important-head">
+              <h3>{{ group.unit }}</h3>
+              <span>{{ group.priority }}</span>
+            </div>
+            <div class="important-list">
+              {% for item in group["items"] %}
+              <a class="important-item" href="{% if item.question_id and item.question_id in question_unit_map %}{{ url_for('unit_page', subject_key=subject.key, unit_number=question_unit_map[item.question_id]) }}#q-{{ item.question_id }}{% else %}#{% endif %}">
+                <strong>{{ item.stars }}</strong>
+                <span>{{ item.text }}</span>
+              </a>
+              {% endfor %}
+            </div>
+          </section>
+          {% endfor %}
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-head"><h2>aam_pdf Library</h2><span>{{ pdf_files|length }}</span></div>
+        {% if pdf_files %}
+        <ul class="pdf-list">
+          {% for pdf in pdf_files %}
+          <li><strong>{{ pdf.name }}</strong><span>{{ pdf.size_kb }} KB</span></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted-note">Drop PDF files into <code>aam_pdf</code> and they will appear here.</p>
+        {% endif %}
+      </aside>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

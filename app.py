@@ -14,6 +14,7 @@ from werkzeug.utils import secure_filename
 BASE_DIR = Path(__file__).resolve().parent
 PDF_DIR = BASE_DIR / "aam_pdf"
 IMAGE_DIR = BASE_DIR / "aam_images"
+SAVED_DIAGRAMS_FILE = IMAGE_DIR / "saved_diagrams.json"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'}
 
 app = Flask(__name__)
@@ -23,6 +24,23 @@ app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024
 @app.errorhandler(RequestEntityTooLarge)
 def handle_file_too_large(error):
     return jsonify({"error": "Image is too large. Please upload an image smaller than 8 MB."}), 413
+
+
+def load_saved_diagrams() -> dict[str, str]:
+    if not SAVED_DIAGRAMS_FILE.exists():
+        return {}
+    try:
+        data = json.loads(SAVED_DIAGRAMS_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_diagram_mapping(question_id: str, image_url: str) -> None:
+    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    diagrams = load_saved_diagrams()
+    diagrams[str(question_id)] = image_url
+    SAVED_DIAGRAMS_FILE.write_text(json.dumps(diagrams, indent=2), encoding="utf-8")
 
 EXAM_TIMETABLE = {
     "season": "MSBTE Summer 2026 - YOUR SUBJECTS",
@@ -1008,6 +1026,7 @@ def unit_page(subject_key: str, unit_number: int):
             pdf_files=list_pdf_files(),
             questions_json=json.dumps([question for unit in subject["units"] for question in unit["questions"]]),
             all_questions=[question for unit in subject["units"] for question in unit["questions"]],
+            saved_diagrams=load_saved_diagrams(),
         )
     
     return render_template(
@@ -1085,6 +1104,26 @@ def api_list_images():
                     "size_kb": round(filepath.stat().st_size / 1024, 1)
                 })
     return jsonify({"images": images})
+
+
+@app.post("/api/save-diagram")
+def api_save_diagram():
+    payload = request.get_json(silent=True) or {}
+    question_id = str(payload.get("questionId", "")).strip()
+    image_url = str(payload.get("imageUrl", "")).strip()
+
+    if not question_id:
+        return jsonify({"error": "Question id is required"}), 400
+    if not image_url.startswith("/images/"):
+        return jsonify({"error": "Please select an uploaded image first"}), 400
+
+    filename = secure_filename(image_url.rsplit("/", 1)[-1])
+    if not filename or not allowed_file(filename) or not (IMAGE_DIR / filename).exists():
+        return jsonify({"error": "Selected image was not found"}), 404
+
+    saved_url = url_for("serve_image", filename=filename)
+    save_diagram_mapping(question_id, saved_url)
+    return jsonify({"success": True, "question_id": question_id, "url": saved_url})
 
 
 @app.get("/images/<filename>")

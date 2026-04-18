@@ -147,9 +147,10 @@
         </div>
         <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
         {% set question_obj = unit.questions | selectattr('id', 'equalto', q.question_id) | list | first %}
-        {% if question_obj and question_obj.image_path %}
-        <div style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
-          <img src="{{ url_for('static', filename='../' + question_obj.image_path) }}" alt="Diagram" style="max-width: 100%; max-height: 300px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)">
+        {% set saved_diagram_url = saved_diagrams.get(question_obj.id|string) if question_obj else none %}
+        {% if question_obj and (saved_diagram_url or question_obj.image_path) %}
+        <div class="bda-diagram-box" data-question-id="{{ question_obj.id }}" style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+          <img src="{{ saved_diagram_url or url_for('static', filename='../' + question_obj.image_path) }}" alt="Diagram" style="max-width: 100%; max-height: 300px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)">
         </div>
         {% endif %}
         {% if question_obj and question_obj.has_diagram %}
@@ -168,6 +169,9 @@
             </div>
             <div>
               <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ question_obj.id }}">Upload Image</button>
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn save-diagram-btn" data-question-id="{{ question_obj.id }}">Save as Diagram</button>
             </div>
           </div>
           <div class="bda-upload-status image-upload-status" data-question-id="{{ question_obj.id }}"></div>
@@ -203,9 +207,10 @@
           <p style="margin: 0 0 0.5rem 0;"><strong>📊 Diagram Type:</strong> {{ q.diagram_type|title }}</p>
           <p style="margin: 0;">💡 This question requires a {{ q.diagram_type|title }} diagram to fully answer.</p>
         </div>
-        {% if q.image_path %}
-        <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
-          <img src="{{ url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 350px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
+        {% set saved_diagram_url = saved_diagrams.get(q.id|string) %}
+        {% if saved_diagram_url or q.image_path %}
+        <div class="bda-diagram-box" data-question-id="{{ q.id }}" style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+          <img src="{{ saved_diagram_url or url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 350px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
           <p style="margin: 0.75rem 0 0 0; font-size: 0.9rem; color: #065f46; text-align: center;">📸 Click to view full-size diagram</p>
         </div>
         {% endif %}
@@ -226,6 +231,9 @@
             </div>
             <div>
               <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ q.id }}">Upload Image</button>
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn save-diagram-btn" data-question-id="{{ q.id }}">Save as Diagram</button>
             </div>
           </div>
           <div class="bda-upload-status image-upload-status" data-question-id="{{ q.id }}"></div>
@@ -295,10 +303,11 @@
         <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
         {% endif %}
         
-        {% if q.image_path %}
-        <div style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+        {% set saved_diagram_url = saved_diagrams.get(q.id|string) %}
+        {% if saved_diagram_url or q.image_path %}
+        <div class="bda-diagram-box" data-question-id="{{ q.id }}" style="background: #f0f9ff; border: 2px dashed #1e40af; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
           <p style="margin: 0 0 0.75rem 0; font-weight: 600; color: #1e40af;">🖼️ Diagram Reference</p>
-          <img src="{{ url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 400px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
+          <img src="{{ saved_diagram_url or url_for('static', filename='../' + q.image_path) }}" alt="Diagram for {{ q.qno }}" style="max-width: 100%; max-height: 400px; border-radius: 4px; cursor: pointer;" onclick="expandImage(this)" title="Click to expand">
           <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6b7280;">💡 Tip: Click on the diagram to view in full size</p>
         </div>
         {% endif %}
@@ -319,6 +328,9 @@
             </div>
             <div>
               <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ q.id }}">Upload Image</button>
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn save-diagram-btn" data-question-id="{{ q.id }}">Save as Diagram</button>
             </div>
           </div>
           <div class="bda-upload-status image-upload-status" data-question-id="{{ q.id }}"></div>
@@ -463,6 +475,63 @@
       displayArea.style.display = 'block';
     }
 
+    function updateDiagramSlots(questionId, imageUrl) {
+      document.querySelectorAll(`.bda-diagram-box[data-question-id="${questionId}"]`).forEach((box) => {
+        const image = box.querySelector('img');
+        if (image) {
+          image.src = imageUrl;
+        }
+      });
+    }
+
+    async function saveDiagram(questionId) {
+      const select = document.querySelector(`.image-reference-select[data-question-id="${questionId}"]`);
+      const statusDiv = document.querySelector(`.image-upload-status[data-question-id="${questionId}"]`);
+      const imageUrl = select?.value;
+
+      if (!imageUrl) {
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.style.color = '#b91c1c';
+          statusDiv.textContent = 'Please upload or select an image first.';
+        }
+        return;
+      }
+
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.color = '#475569';
+        statusDiv.textContent = 'Saving image as diagram...';
+      }
+
+      try {
+        const response = await fetch('/api/save-diagram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId, imageUrl })
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Could not save diagram.');
+        }
+
+        updateDiagramSlots(questionId, data.url);
+        displaySelectedImage(questionId, data.url);
+
+        if (statusDiv) {
+          statusDiv.style.color = '#0f766e';
+          statusDiv.textContent = 'Saved. This image will appear in the diagram place after reload.';
+        }
+      } catch (error) {
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.style.color = '#b91c1c';
+          statusDiv.textContent = error.message || 'Could not save diagram.';
+        }
+      }
+    }
+
     async function uploadImage(questionId) {
       const input = document.querySelector(`.image-upload-input[data-question-id="${questionId}"]`);
       const statusDiv = document.querySelector(`.image-upload-status[data-question-id="${questionId}"]`);
@@ -529,6 +598,10 @@
 
       document.querySelectorAll('.image-upload-btn').forEach((button) => {
         button.addEventListener('click', () => uploadImage(button.dataset.questionId));
+      });
+
+      document.querySelectorAll('.save-diagram-btn').forEach((button) => {
+        button.addEventListener('click', () => saveDiagram(button.dataset.questionId));
       });
 
       document.querySelectorAll('.image-upload-input').forEach((input) => {

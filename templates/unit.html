@@ -152,6 +152,34 @@
               <p>No fixed diagram added for this question. You can use this space to attach or sketch your own exam diagram.</p>
             </div>
             {% endif %}
+
+            {% if question.diagram_url %}
+            <!-- Image Upload Section -->
+            <div style="margin-top: 1rem; border-top: 1px solid var(--line); padding-top: 1rem;">
+              <h4 style="margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--ink);">Upload Custom Image</h4>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                <input type="file" class="image-upload-input" data-question-id="{{ question.id }}" accept="image/*" style="flex: 1; min-width: 200px;">
+                <button type="button" class="primary-btn image-upload-btn" data-question-id="{{ question.id }}" style="white-space: nowrap;">Upload Image</button>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--secondary); margin-top: 0.5rem;">Supported: PNG, JPG, JPEG, GIF, WebP, SVG</p>
+
+              <!-- Image Reference Dropdown -->
+              <label style="display: block; margin-top: 1rem;">
+                <span style="display: block; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 500; color: var(--ink);">Select Image Reference</span>
+                <select class="image-reference-select" data-question-id="{{ question.id }}" style="width: 100%; padding: 0.5rem; border: 1px solid var(--line); border-radius: 0.25rem; font-size: 0.9rem;">
+                  <option value="">-- Choose an image --</option>
+                </select>
+              </label>
+
+              <!-- Selected Image Display -->
+              <div class="image-display-area" data-question-id="{{ question.id }}" style="margin-top: 1rem; display: none;">
+                <img class="selected-image" src="" alt="Selected image" style="max-width: 100%; max-height: 300px; border-radius: 0.5rem; border: 1px solid var(--line);">
+                <p class="image-filename" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--secondary);"></p>
+              </div>
+
+              <div class="image-upload-status" data-question-id="{{ question.id }}" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--secondary); display: none;"></div>
+            </div>
+            {% endif %}
           </section>
 
           <section class="study-block">

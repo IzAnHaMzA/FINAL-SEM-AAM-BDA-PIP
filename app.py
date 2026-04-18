@@ -743,7 +743,9 @@ def expand_question_details() -> None:
     for subject_key, subject in SUBJECTS.items():
         for unit in subject["units"]:
             for question in unit["questions"]:
-                if subject_key == "man":
+                if subject_key == "man" or subject_key == "bda":
+                    continue
+                if "definition" not in question:
                     continue
                 if not question["definition"].endswith(subject_suffix[subject_key].strip()):
                     question["definition"] = question["definition"].rstrip(".") + "." + subject_suffix[subject_key]
@@ -818,22 +820,24 @@ def get_question(question_id: int) -> dict | None:
 
 
 def build_answer_text(question: dict) -> str:
-    parts = [question["definition"]]
+    if "answer" in question:
+        return question["answer"]
+    parts = [question.get("definition", "")]
     if question["type"] == "difference":
-        for basis, pair in zip(question["difference_basis"], question["differences"]):
+        for basis, pair in zip(question.get("difference_basis", []), question.get("differences", [])):
             parts.append(basis)
             parts.extend(pair)
     else:
-        parts.extend(question["points"])
+        parts.extend(question.get("points", []))
     parts.extend(question.get("examples", []))
-    return " ".join(parts)
+    return " ".join(p for p in parts if p)
 
 
 def evaluate_answer(question: dict, answer: str) -> dict:
     reference = build_answer_text(question)
     answer_clean = normalize_text(answer)
     similarity = SequenceMatcher(None, answer_clean, normalize_text(reference)).ratio()
-    definition_similarity = SequenceMatcher(None, answer_clean, normalize_text(question["definition"])).ratio()
+    definition_similarity = SequenceMatcher(None, answer_clean, normalize_text(question.get("definition", reference))).ratio()
 
     matched_points, missed_points, matched_differences, missed_differences = [], [], [], []
     for point in question.get("points", []):
@@ -842,7 +846,9 @@ def evaluate_answer(question: dict, answer: str) -> dict:
         else:
             missed_points.append(point)
 
-    for basis, pair in zip(question.get("difference_basis", []), question.get("differences", [])):
+    for basis, pair in zip(question.get("difference_basis", []) or [], question.get("differences", []) or []):
+        if not pair or len(pair) < 2:
+            continue
         left, right = pair
         basis_hit = len(tokenize(basis) & tokenize(answer)) >= 1
         left_hit = len(tokenize(left) & tokenize(answer)) >= 1
@@ -856,10 +862,10 @@ def evaluate_answer(question: dict, answer: str) -> dict:
     example_hits = [example for example in examples if example and example.lower() in answer.lower()]
     example_hit = bool(example_hits)
     score = round(definition_similarity * 25)
-    if question["type"] == "difference":
-        score += round((len(matched_differences) / max(1, len(question["differences"]))) * 55)
+    if question["type"] == "difference" or question["type"] == "differentiate":
+        score += round((len(matched_differences) / max(1, len(question.get("differences", [])))) * 55)
     else:
-        score += round((len(matched_points) / max(1, len(question["points"]))) * 55)
+        score += round((len(matched_points) / max(1, len(question.get("points", [])))) * 55)
     score += 20 if example_hit else round(similarity * 20)
     score = max(0, min(100, score))
 

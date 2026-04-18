@@ -210,6 +210,29 @@
         </div>
         {% endif %}
         <button class="bda-toggle-btn" onclick="toggleAnswer(this)">📖 Show Answer</button>
+        <div class="bda-reference-tools">
+          <h4>Unit As Reference</h4>
+          <div class="bda-reference-grid">
+            <div>
+              <label class="bda-field-label" for="reference-select-diagram-{{ q.id }}">Select uploaded image</label>
+              <select id="reference-select-diagram-{{ q.id }}" class="bda-reference-select image-reference-select" data-question-id="{{ q.id }}">
+                <option value="">Choose an image reference</option>
+              </select>
+            </div>
+            <div>
+              <label class="bda-field-label" for="upload-input-diagram-{{ q.id }}">Upload any image</label>
+              <input id="upload-input-diagram-{{ q.id }}" type="file" class="bda-upload-input image-upload-input" data-question-id="{{ q.id }}" accept="image/*">
+            </div>
+            <div>
+              <button type="button" class="bda-upload-btn image-upload-btn" data-question-id="{{ q.id }}">Upload Image</button>
+            </div>
+          </div>
+          <div class="bda-upload-status image-upload-status" data-question-id="{{ q.id }}"></div>
+          <div class="bda-selected-image-wrap image-display-area" data-question-id="{{ q.id }}">
+            <p class="bda-selected-image-name image-filename"></p>
+            <img class="selected-image" src="" alt="Selected reference image" onclick="expandImage(this)">
+          </div>
+        </div>
         <div class="bda-question-answer">
           <pre>{{ q.answer }}</pre>
         </div>

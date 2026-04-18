@@ -123,10 +123,10 @@
     </div>
 
     <!-- SECTION 2: IMPORTANT QUESTIONS (SORTED BY IMPORTANCE) -->
-    {% if current_bank and current_bank.items %}
+    {% if current_bank and current_bank['items'] %}
     <section class="bda-section">
-      <h2 class="bda-section-title">⭐ Most Important Questions ({{ current_bank.priority }})</h2>
-      {% for q in current_bank.items[:6] %}
+      <h2 class="bda-section-title">⭐ Most Important Questions ({{ current_bank['priority'] }})</h2>
+      {% for q in current_bank['items'][:6] %}
       <div class="bda-question-card bda-importance-high" data-filter="important">
         <div class="bda-question-header">
           <span class="bda-question-number">{{ q.stars }} {{ q.text[:40] }}...</span>
